@@ -1,0 +1,11 @@
+include ':app'
+include ':capacitor-cordova-android-plugins'
+project(':capacitor-cordova-android-plugins').projectDir = file('./capacitor-cordova-android-plugins')
+
+def capacitorAndroidDir = file('../node_modules/@capacitor/android/capacitor')
+if (capacitorAndroidDir.exists()) {
+    include ':capacitor-android'
+    project(':capacitor-android').projectDir = capacitorAndroidDir
+} else {
+    throw new Exception("Capacitor Android library not found at '${capacitorAndroidDir.absolutePath}'. Please run 'npm install' in the root project directory.")
+}
