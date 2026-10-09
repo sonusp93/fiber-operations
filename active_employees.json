@@ -45,6 +45,51 @@
       "department": "Field Operations",
       "status": "ACTIVE",
       "fieldPasscode": "1234"
+    },
+    {
+      "employeeId": "EMP006",
+      "name": "Field Engineer 06",
+      "role": "Field Telecom Engineer",
+      "phone": "+91 98470 12350",
+      "department": "Field Operations",
+      "status": "ACTIVE",
+      "fieldPasscode": "1234"
+    },
+    {
+      "employeeId": "EMP007",
+      "name": "Field Engineer 07",
+      "role": "Field Telecom Engineer",
+      "phone": "+91 98470 12351",
+      "department": "Field Operations",
+      "status": "ACTIVE",
+      "fieldPasscode": "1234"
+    },
+    {
+      "employeeId": "EMP008",
+      "name": "Field Engineer 08",
+      "role": "Field Telecom Engineer",
+      "phone": "+91 98470 12352",
+      "department": "Field Operations",
+      "status": "ACTIVE",
+      "fieldPasscode": "1234"
+    },
+    {
+      "employeeId": "EMP009",
+      "name": "Field Engineer 09",
+      "role": "Field Telecom Engineer",
+      "phone": "+91 98470 12353",
+      "department": "Field Operations",
+      "status": "ACTIVE",
+      "fieldPasscode": "1234"
+    },
+    {
+      "employeeId": "EMP010",
+      "name": "Field Engineer 10",
+      "role": "Field Telecom Engineer",
+      "phone": "+91 98470 12354",
+      "department": "Field Operations",
+      "status": "ACTIVE",
+      "fieldPasscode": "1234"
     }
   ],
   "revokedTechnicianIds": [],
