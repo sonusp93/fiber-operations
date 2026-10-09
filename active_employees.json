@@ -1,7 +1,21 @@
 {
-  "active_ids": [
-    "EMP001",
-    "EMP002",
-    "EMP003"
-  ]
+  "version": "1.0.0",
+  "employees": [
+    {
+      "employeeId": "EMP001",
+      "name": "Sonu S Pushpan",
+      "role": "Senior Field Telecom Engineer",
+      "phone": "+91 98470 12345",
+      "department": "Optical Transmission & FAT Maintenance",
+      "status": "ACTIVE",
+      "fieldPasscode": "1234"
+    }
+  ],
+  "revokedTechnicianIds": [],
+  "latestAppUpdate": {
+    "version": "2.5.2",
+    "build": "Build 144 (Official Release)",
+    "releaseNotes": "Official Production Release",
+    "isMandatory": false
+  }
 }
