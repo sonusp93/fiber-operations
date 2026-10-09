@@ -9,13 +9,49 @@
       "department": "Optical Transmission & FAT Maintenance",
       "status": "ACTIVE",
       "fieldPasscode": "1234"
+    },
+    {
+      "employeeId": "EMP002",
+      "name": "Field Engineer 02",
+      "role": "Field Telecom Engineer",
+      "phone": "+91 98470 12346",
+      "department": "Field Operations",
+      "status": "ACTIVE",
+      "fieldPasscode": "1234"
+    },
+    {
+      "employeeId": "EMP003",
+      "name": "Field Engineer 03",
+      "role": "Field Telecom Engineer",
+      "phone": "+91 98470 12347",
+      "department": "Field Operations",
+      "status": "ACTIVE",
+      "fieldPasscode": "1234"
+    },
+    {
+      "employeeId": "EMP004",
+      "name": "Field Engineer 04",
+      "role": "Field Telecom Engineer",
+      "phone": "+91 98470 12348",
+      "department": "Field Operations",
+      "status": "ACTIVE",
+      "fieldPasscode": "1234"
+    },
+    {
+      "employeeId": "EMP005",
+      "name": "Field Engineer 05",
+      "role": "Field Telecom Engineer",
+      "phone": "+91 98470 12349",
+      "department": "Field Operations",
+      "status": "ACTIVE",
+      "fieldPasscode": "1234"
     }
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "2.5.2",
-    "build": "Build 144 (Official Release)",
-    "releaseNotes": "Official Production Release",
+    "version": "1.0.0",
+    "build": "Build 100 (Official Release)",
+    "releaseNotes": "Official LocFinder Pro Production Build",
     "isMandatory": false
   }
 }
