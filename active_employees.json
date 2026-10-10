@@ -94,7 +94,7 @@
       "fieldPasscode": "1234"
     }
   ],
-  "revokedTechnicianIds": ["TECH-KRL-8092"],
+  "revokedTechnicianIds": [],
   "latestAppUpdate": {
     "version": "3.0.0",
     "build": "Build 300 (LocFinder Pro v3.0.0)",
