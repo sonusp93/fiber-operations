@@ -152,13 +152,13 @@ export const DEFAULT_OFFICIAL_EMPLOYEES: CompanyEmployee[] = [
 
 // Current installed app version (LocFinder Pro Official Release)
 export const CURRENT_APP_VERSION = {
-  version: '3.4.0',
-  build: 'Build 340 (LocFinder Pro v3.4.0)'
+  version: '3.5.0',
+  build: 'Build 350 (LocFinder Pro v3.5.0)'
 };
 
 // Default corporate policy template pointing to company GitHub repository
 const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
-  version: '3.4.0',
+  version: '3.5.0',
   lastUpdated: new Date().toISOString(),
   globalWipeRevision: 1,
   revokedTechnicianIds: [],
@@ -167,12 +167,12 @@ const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
   githubRepoSource: 'https://raw.githubusercontent.com/sonusp93/fiber-operations/main/active_employees.json',
   activeEmployees: DEFAULT_OFFICIAL_EMPLOYEES,
   latestAppUpdate: {
-    version: '3.4.0',
-    build: 'Build 340 (Official GitHub Release)',
-    releaseNotes: 'Official Live Major Release v3.4.0: Fixed header version badge mismatch, live cache-busting GitHub OTA engine, and instant in-app firmware patcher.',
+    version: '3.5.0',
+    build: 'Build 350 (Official GitHub Release)',
+    releaseNotes: 'Official Live Major Release v3.5.0: Semver rank comparison engine, robust multi-source update detector, and instant in-app firmware patcher.',
     isMandatory: true,
     publishedAt: new Date().toISOString(),
-    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v3.4.0/LocFinderPro.apk'
+    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v3.5.0/LocFinderPro.apk'
   }
 };
 
