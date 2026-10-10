@@ -1,5 +1,5 @@
 {
-  "version": "3.5.0",
+  "version": "3.6.0",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -96,10 +96,10 @@
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "3.5.0",
-    "build": "Build 350 (LocFinder Pro v3.5.0)",
-    "releaseNotes": "Official Live Major Release v3.5.0: Semver rank comparison engine, robust multi-source update detector, and instant in-app firmware patcher.",
+    "version": "3.6.0",
+    "build": "Build 360 (LocFinder Pro v3.6.0)",
+    "releaseNotes": "Official Live Release v3.6.0: Removed search bar and search triggers from Dashboard home screen.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.5.0/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.6.0/LocFinderPro.apk"
   }
 }

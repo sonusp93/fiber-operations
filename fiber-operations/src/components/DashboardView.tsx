@@ -74,24 +74,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </div>
 
       <div className="px-5 py-4 space-y-5 max-w-lg mx-auto w-full">
-        {/* Search Input Trigger */}
-        <div
-          onClick={onOpenSearch}
-          className={`flex items-center gap-3 px-4 py-3 rounded-2xl border cursor-pointer shadow-lg transition-all group ${
-            isLightMode
-              ? 'bg-white border-black hover:border-black hover:bg-neutral-50'
-              : 'bg-neutral-900/90 border-black hover:border-black hover:bg-neutral-850'
-          }`}
-        >
-          <SearchIcon className="w-4 h-4 text-neutral-400 group-hover:text-cyan-400 transition-colors" />
-          <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors font-sans">
-            Search for lookups, FATs, RSUs...
-          </span>
-          <span className="ml-auto text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-800 text-neutral-400 border border-black">
-            ⌘K
-          </span>
-        </div>
-
         {/* Quick Sector Filter Chips */}
         <div className="flex gap-2 overflow-x-auto pb-1 text-xs no-scrollbar">
           {(['ALL', 'FAT', 'HUB', 'RSU', 'PON'] as const).map((cat) => (

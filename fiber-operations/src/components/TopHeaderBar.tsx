@@ -137,8 +137,8 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
     }
   };
 
-  // On Home screen, top bar shows search ONLY when scrolled down past the in-page search bar
-  const shouldShowTopSearch = currentTab !== 'HOME' || isScrolledDown;
+  // On Home screen (Dashboard), never show top search bar
+  const shouldShowTopSearch = currentTab !== 'HOME';
 
   return (
     <header 
@@ -163,17 +163,15 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
             </button>
           </div>
 
-          {/* CENTER: NO OVERLAP! Seamless fluid search bar or brand badge */}
+          {/* CENTER: Clean Brand Badge for Dashboard */}
           {!shouldShowTopSearch ? (
             <div className="flex-1 min-w-0 flex items-center justify-center px-1 overflow-hidden animate-in fade-in zoom-in-95 duration-300">
               <div 
-                onClick={onScrolledSearchClick}
-                className={`h-9 sm:h-10 max-w-full px-2.5 sm:px-4 rounded-full flex items-center gap-1.5 sm:gap-2 border backdrop-blur-2xl shadow-sm transition-all duration-300 cursor-pointer hover:border-cyan-500/40 min-w-0 overflow-hidden shrink ${
+                className={`h-9 sm:h-10 max-w-full px-2.5 sm:px-4 rounded-full flex items-center gap-1.5 sm:gap-2 border backdrop-blur-2xl shadow-sm transition-all duration-300 min-w-0 overflow-hidden shrink ${
                   isLightMode
-                    ? 'bg-white/80 border-slate-200 text-slate-800 hover:bg-slate-50'
-                    : 'bg-[rgba(18,20,28,0.85)] border-white/10 text-slate-200 hover:bg-white/10'
+                    ? 'bg-white/80 border-slate-200 text-slate-800'
+                    : 'bg-[rgba(18,20,28,0.85)] border-white/10 text-slate-200'
                 }`}
-                title="Tap to view Home Search"
               >
                 <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shrink-0 shadow-[0_0_8px_#22d3ee]" />
                 <span className={`text-[11px] sm:text-xs font-mono font-bold tracking-wider truncate min-w-0 ${
