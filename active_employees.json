@@ -1,5 +1,5 @@
 {
-  "version": "1.5.0",
+  "version": "2.0.0",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -104,10 +104,10 @@
   ],
   "revokedTechnicianIds": ["TECH-KRL-8092"],
   "latestAppUpdate": {
-    "version": "1.5.0",
-    "build": "Build 150 (LocFinder Pro v1.5.0)",
-    "releaseNotes": "Official Live OTA Release v1.5.0: Fixed GitHub API authentication headers for public repository, 1-device 1-user hardware lock across all EMP001-EMP010 accounts, native in-app download manager, and instant OTA sync.",
+    "version": "2.0.0",
+    "build": "Build 200 (LocFinder Pro v2.0.0)",
+    "releaseNotes": "Major Live OTA Release v2.0.0: Bulletproof public raw GitHub synchronization, native background download manager, package installer, 1-device 1-user hardware lock for all EMP001-EMP010 accounts, and instant OTA notification.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v1.5.0/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v2.0.0/LocFinderPro.apk"
   }
 }
