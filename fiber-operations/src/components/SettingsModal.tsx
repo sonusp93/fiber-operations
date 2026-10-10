@@ -238,7 +238,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   Field Engine Settings
                 </h2>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 font-bold border border-cyan-500/30">
-                  v3.1.5
+                  v{CompanySecurityService.getCurrentInstalledVersion().version}
                 </span>
               </div>
               <span className={`text-[11px] font-mono ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>
@@ -313,7 +313,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <div className="flex items-center gap-2">
                   <h4 className="text-xs font-black flex items-center gap-1.5">
                     <Info className="w-4 h-4 text-cyan-400" />
-                    <span>What's New in Version 3.1.5</span>
+                    <span>What's New in Version {CompanySecurityService.getCurrentInstalledVersion().version}</span>
                   </h4>
                   <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 font-bold border border-cyan-500/30">
                     Changelog
