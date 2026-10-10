@@ -310,62 +310,59 @@ const NetworkHierarchyViewComp: React.FC<NetworkHierarchyViewProps> = ({
                             {hub.fats.slice(0, 40).map((fat) => (
                               <div
                                 key={fat.id}
-                                className={`p-2.5 flex items-center justify-between transition-colors ${
-                                  isLightMode ? 'hover:bg-slate-100/60' : 'hover:bg-white/[0.04]'
+                                className={`p-3 transition-colors border-b last:border-0 ${
+                                  isLightMode ? 'hover:bg-blue-50/50 border-slate-200' : 'hover:bg-white/[0.04] border-white/5'
                                 }`}
                               >
                                 <div
-                                  className="cursor-pointer flex-1 mr-2"
+                                  className="cursor-pointer flex flex-col gap-1.5"
                                   onClick={() => onSelectFat(fat)}
                                 >
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-xs font-mono font-bold text-blue-600">
-                                      FAT {fat.fatId}
-                                    </span>
-                                    <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded font-bold ${
-                                      isLightMode
-                                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                        : 'bg-emerald-950/70 text-emerald-400 border border-emerald-800/40'
-                                    }`}>
-                                      {fat.ponPort}
-                                    </span>
-                                    <span className={`text-[10px] font-mono ${
-                                      isLightMode ? 'text-slate-500' : 'text-slate-400'
-                                    }`}>
-                                      {fat.totalCap}P
-                                    </span>
-                                  </div>
-                                  <div className={`text-xs mt-0.5 truncate max-w-[200px] font-medium ${
-                                    isLightMode ? 'text-slate-800' : 'text-slate-200'
-                                  }`}>
-                                    {fat.neAddress} · {fat.locality}
-                                  </div>
-                                  <div className={`text-[10px] font-mono ${
-                                    isLightMode ? 'text-slate-400' : 'text-slate-500'
-                                  }`}>
-                                    GPS: {fat.fatLat.toFixed(5)}, {fat.fatLog.toFixed(5)} · RFS: {fat.rfsDate}
-                                  </div>
-                                </div>
+                                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-xs font-mono font-black text-cyan-400">
+                                        PON {fat.ponPort}
+                                      </span>
+                                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold ${
+                                        isLightMode
+                                          ? 'bg-blue-100 text-blue-800 border border-blue-300'
+                                          : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                                      }`}>
+                                        FAT-{fat.fatId}
+                                      </span>
+                                      <span className="text-[9.5px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold">
+                                        1:8 Primary Splitter
+                                      </span>
+                                    </div>
 
-                                <div className="flex items-center gap-1 shrink-0">
-                                  <button
-                                    onClick={() => onSelectFat(fat)}
-                                    className={`p-1.5 rounded-lg border ${
-                                      isLightMode
-                                        ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
-                                        : 'bg-white/10 hover:bg-white/20 text-white border-white/10'
-                                    }`}
-                                    title="View Details"
-                                  >
-                                    <Box className="w-3.5 h-3.5" />
-                                  </button>
-                                  <button
-                                    onClick={() => onNavigateToFat(fat)}
-                                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-xs cursor-pointer shadow-sm active:scale-95"
-                                  >
-                                    <Navigation className="w-3 h-3 fill-white text-white" />
-                                    <span>Navigate</span>
-                                  </button>
+                                    <div className="text-[10.5px] font-mono font-bold text-amber-400">
+                                      -18.5 dBm &middot; {fat.totalCap} Active ONUs
+                                    </div>
+                                  </div>
+
+                                  <div className="flex items-center justify-between gap-2">
+                                    <div className={`text-xs font-medium truncate ${
+                                      isLightMode ? 'text-slate-800' : 'text-slate-200'
+                                    }`}>
+                                      {fat.neAddress} &middot; {fat.locality}
+                                    </div>
+
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        onNavigateToFat(fat);
+                                      }}
+                                      className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono font-bold text-[10.5px] shrink-0 active:scale-95 transition-all"
+                                    >
+                                      <Navigation className="w-3 h-3 fill-white" />
+                                      <span>Route PON</span>
+                                    </button>
+                                  </div>
+
+                                  <div className={`text-[10px] font-mono flex items-center justify-between text-slate-400`}>
+                                    <span>Laser: GPON Class C+ (1490nm Tx / 1310nm Rx)</span>
+                                    <span>GPS: {fat.fatLat.toFixed(4)}, {fat.fatLog.toFixed(4)}</span>
+                                  </div>
                                 </div>
                               </div>
                             ))}

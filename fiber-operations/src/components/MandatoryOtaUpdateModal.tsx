@@ -181,7 +181,37 @@ export const MandatoryOtaUpdateModal: React.FC<MandatoryOtaUpdateModalProps> = (
           </div>
         </div>
 
-        {/* Release Notes */}
+        {/* Release Notes & New Features List */}
+        <div className="p-3.5 rounded-2xl bg-cyan-950/30 border border-cyan-500/30 space-y-2 text-xs relative z-10">
+          <div className="flex items-center gap-2 text-cyan-300 font-mono font-bold text-[11px] uppercase tracking-wider">
+            <ShieldCheck className="w-4 h-4 text-cyan-400" />
+            <span>New Features in Version {updateInfo.version}</span>
+          </div>
+          <ul className="space-y-1.5 text-[11px] text-slate-200 font-mono">
+            <li className="flex items-start gap-2">
+              <span className="text-cyan-400 font-bold shrink-0">✓</span>
+              <span><strong>Strict 1-Device Hardware Binding:</strong> Each Employee ID is locked to 1 phone globally via GitHub API. Same phone cannot switch between free IDs.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-cyan-400 font-bold shrink-0">✓</span>
+              <span><strong>120 FPS Paginated Radar:</strong> Super-smooth scanning for 2000+ FAT nodes with instant (+50) node loading to prevent freezing.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-cyan-400 font-bold shrink-0">✓</span>
+              <span><strong>Specialized PON Telemetry View:</strong> Dedicated PON Trunk & Splitter cards with GPON Class C+ 1490/1310nm laser specs and ONU counts.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-cyan-400 font-bold shrink-0">✓</span>
+              <span><strong>Native Android Back Gesture:</strong> Integrated `@capacitor/app` native listener to cleanly minimize app on Home tab.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-cyan-400 font-bold shrink-0">✓</span>
+              <span><strong>Battery &amp; Thermal Protection:</strong> Throttled GPS sensor polling to prevent phone heating and battery drain.</span>
+            </li>
+          </ul>
+        </div>
+
+        {/* Release Notes Summary */}
         <div className="p-3 rounded-xl bg-white/[0.04] border border-white/10 text-[11px] font-mono space-y-1 text-slate-300 relative z-10">
           <div className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">
             Changelog &middot; {updateInfo.build}

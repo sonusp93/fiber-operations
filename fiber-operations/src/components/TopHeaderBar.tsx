@@ -76,21 +76,23 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
     inputRef.current?.focus();
   };
 
-  // Fast short-circuiting autocomplete matches for top bar dropdown (max 7 matches)
+  // Fast short-circuiting autocomplete matches for top bar dropdown (max 10 matches)
   const liveMatches = useMemo(() => {
     if (!searchQuery.trim()) return [];
     const q = searchQuery.toLowerCase().trim();
     const matches: FatRecord[] = [];
     for (const f of FAT_DATASET) {
-      if (matches.length >= 7) break;
+      if (matches.length >= 10) break;
       if (
         f.fatId.toLowerCase().includes(q) ||
+        f.id.toLowerCase().includes(q) ||
         f.ponPort.toLowerCase().includes(q) ||
         f.neAddress.toLowerCase().includes(q) ||
         f.locality.toLowerCase().includes(q) ||
         f.city.toLowerCase().includes(q) ||
         f.hub.toLowerCase().includes(q) ||
-        f.rsu.toLowerCase().includes(q)
+        f.rsu.toLowerCase().includes(q) ||
+        (f.affiliatedPon && f.affiliatedPon.toLowerCase().includes(q))
       ) {
         matches.push(f);
       }
@@ -124,6 +126,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
 
   const confirmLogout = () => {
     setShowLogoutConfirm(false);
+    localStorage.removeItem('locfinder_auth_user');
     if (onLogout) {
       onLogout();
     }
@@ -171,8 +174,8 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
                 <span className={`text-[11px] sm:text-xs font-mono font-bold tracking-wider truncate min-w-0 ${
                   isLightMode ? 'text-blue-700' : 'text-cyan-300'
                 }`}>
-                  <span className="inline sm:hidden">VKA FIBER</span>
-                  <span className="hidden sm:inline">VKA FIBER OPERATIONS</span>
+                  <span className="inline sm:hidden">LOCFINDER</span>
+                  <span className="hidden sm:inline">LOCFINDER PRO</span>
                 </span>
                 <span className="text-[10px] font-mono text-slate-400 hidden md:inline shrink-0">
                   · RTK GIS
@@ -235,50 +238,59 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
                 )}
               </div>
 
-            {/* LIVE SEARCH AUTOCOMPLETE DROPDOWN */}
+            {/* LIVE SEARCH AUTOCOMPLETE DROPDOWN (ENLARGED HIGH-VISIBILITY SEARCH RESULT BOX) */}
             {isSearchActive && searchQuery.trim().length > 0 && (
-              <div className={`absolute top-11 sm:top-12 left-0 right-0 rounded-2xl border p-2 shadow-2xl z-[999] animate-in fade-in zoom-in-95 duration-150 ${
+              <div className={`absolute top-11 sm:top-12 left-0 right-0 rounded-3xl border p-3.5 shadow-2xl z-[999] animate-in fade-in zoom-in-95 duration-150 ${
                 isLightMode 
-                  ? 'bg-white border-slate-200 text-slate-900 shadow-2xl ring-1 ring-slate-900/10' 
-                  : 'bg-[#0f1322] border-cyan-500/30 text-white shadow-[0_20px_50px_rgba(0,0,0,0.95)] backdrop-blur-2xl ring-1 ring-cyan-500/20'
+                  ? 'bg-white border-blue-200 text-slate-900 shadow-2xl ring-1 ring-slate-900/10'
+                  : 'bg-[#0b0e1a] border-cyan-500/40 text-white shadow-[0_25px_60px_rgba(0,0,0,0.98)] backdrop-blur-3xl ring-1 ring-cyan-500/30'
               }`}>
-                <div className="flex items-center justify-between px-2.5 py-1.5 mb-1 border-b border-white/5 text-[10.5px] font-mono text-slate-400">
-                  <span className="font-bold text-cyan-400 dark:text-cyan-300">MATCHING NODES ({liveMatches.length})</span>
-                  <span>TAP TO LOCATE</span>
+                <div className="flex items-center justify-between px-3 py-2 mb-2 border-b border-white/10 text-xs font-mono">
+                  <span className="font-extrabold text-cyan-400">SEARCH RESULTS ({liveMatches.length} MATCHES)</span>
+                  <span className="text-[11px] text-slate-400 font-bold">TAP TO OPEN TERMINAL</span>
                 </div>
-                <div className="space-y-1 max-h-64 overflow-y-auto no-scrollbar">
+                <div className="space-y-2 max-h-[75vh] sm:max-h-96 overflow-y-auto no-scrollbar">
                   {liveMatches.length > 0 ? (
                     liveMatches.map((fat) => (
                       <div
                         key={fat.id}
                         onClick={() => {
+                          onSearchChange(fat.fatId);
                           if (onSelectFat) onSelectFat(fat);
                           setIsSearchActive(false);
                         }}
-                        className={`flex items-center justify-between px-3 py-2 rounded-xl cursor-pointer transition-all border border-transparent ${
+                        className={`p-3 rounded-2xl cursor-pointer transition-all border flex items-center justify-between gap-3 active:scale-98 ${
                           isLightMode 
-                            ? 'hover:bg-blue-50/90 hover:border-blue-200 text-slate-800' 
-                            : 'hover:bg-white/10 hover:border-cyan-500/20 text-white'
+                            ? 'bg-slate-50 hover:bg-blue-50 border-slate-200 hover:border-blue-400 text-slate-800'
+                            : 'bg-white/[0.04] hover:bg-cyan-950/40 border-white/10 hover:border-cyan-400/50 text-white shadow-sm'
                         }`}
                       >
-                        <div className="truncate pr-2">
-                          <div className="font-mono font-bold text-xs text-blue-600 dark:text-cyan-300">
-                            FAT {fat.fatId} &middot; <span className="text-emerald-500">{fat.ponPort}</span>
+                        <div className="min-w-0 flex-1">
+                          <div className="font-mono font-black text-xs sm:text-sm text-cyan-400 flex items-center gap-2 flex-wrap">
+                            <span>FAT {fat.fatId}</span>
+                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                              {fat.ponPort}
+                            </span>
                           </div>
-                          <div className="text-[10px] truncate text-slate-500 dark:text-slate-400 mt-0.5">
-                            {fat.neAddress} &middot; {fat.locality}
+                          <div className="text-xs truncate font-medium text-slate-300 mt-1">
+                            {fat.neAddress}
+                          </div>
+                          <div className="text-[11px] font-mono text-slate-400 truncate mt-0.5">
+                            {fat.locality} &middot; {fat.city}
                           </div>
                         </div>
-                        <span className="text-[10px] font-mono font-bold text-slate-400 shrink-0 px-1.5 py-0.5 rounded bg-white/5 border border-white/5">
-                          HUB {fat.hub}
-                        </span>
+                        <div className="shrink-0 text-right font-mono">
+                          <span className="text-xs font-black text-amber-400 block px-2.5 py-1 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                            HUB {fat.hub}
+                          </span>
+                        </div>
                       </div>
                     ))
                   ) : (
-                    <div className="p-4 text-center text-xs text-slate-400 space-y-1">
-                      <div>No nodes found matching &ldquo;<span className="text-cyan-400 font-bold">{searchQuery}</span>&rdquo;</div>
-                      <div className="text-[10.5px] text-slate-500">
-                        Try searching with FAT ID (e.g. 01I), PON, HUB, RSU or locality
+                    <div className="p-6 text-center text-xs text-slate-400 space-y-1.5 font-mono">
+                      <div className="text-sm font-bold text-slate-300">No nodes found matching &ldquo;<span className="text-cyan-400 font-bold">{searchQuery}</span>&rdquo;</div>
+                      <div className="text-xs text-slate-500">
+                        Try searching by FAT ID (e.g. 08N07), PON Port, HUB, RSU or Locality
                       </div>
                     </div>
                   )}

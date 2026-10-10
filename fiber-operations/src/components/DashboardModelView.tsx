@@ -5,7 +5,7 @@ import { SparklineChart } from './SparklineChart';
 import { NetworkOperationsCenterCard } from './NetworkOperationsCenterCard';
 import { 
   ChevronRight, Radio, GripVertical, Sliders,
-  Check, RotateCcw, Sparkles, MapPin, Zap, Flame, Search, X, Navigation, 
+  Check, RotateCcw, Sparkles as LucideSparkles, MapPin, Zap, Flame, Search, X, Navigation,
   RefreshCw, ChevronDown, ChevronUp, Layers, Compass, Network, Briefcase, Shield, ArrowRight, Power,
   LogOut, User, Smartphone
 } from 'lucide-react';
@@ -13,6 +13,16 @@ import { Fat3DModelIcon, Hub3DModelIcon, Rsu3DModelIcon, PonPort3DModelIcon, Rad
 import { AndroidStudioModal } from './AndroidStudioModal';
 
 import { UserAuthProfile } from './TechnicianLoginPage';
+
+const Sparkles = LucideSparkles || ((props: any) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.937A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .962 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.962 0z" />
+    <path d="M20 3v4" />
+    <path d="M22 5h-4" />
+    <path d="M4 17v2" />
+    <path d="M5 18H3" />
+  </svg>
+));
 
 interface DashboardModelViewProps {
   onOpenSearch?: () => void;
@@ -1639,28 +1649,15 @@ const DashboardModelViewComp: React.FC<DashboardModelViewProps> = ({
                   </span>
                 </div>
                 <h4 className="text-sm sm:text-base font-extrabold truncate mt-0.5">
-                  {currentUser?.technicianName || 'Sonu'}
+                  {currentUser?.technicianName || 'Sonu S Pushpan'}
                 </h4>
                 <p className={`text-[11px] font-mono truncate ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>
-                  ID: {currentUser?.technicianId || 'TECH-KRL-8092'} · {currentUser?.role || 'Field Telecom Engineer'}
+                  ID: {currentUser?.technicianId || 'EMP001'} · {currentUser?.role || 'Field Telecom Engineer'}
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={() => setIsAndroidStudioModalOpen(true)}
-                className={`px-3 py-2 rounded-xl text-xs font-mono font-bold border transition-all cursor-pointer active:scale-95 flex items-center gap-1.5 ${
-                  isLightMode
-                    ? 'bg-emerald-50 hover:bg-emerald-100 border-emerald-300 text-emerald-800'
-                    : 'bg-emerald-950/40 hover:bg-emerald-900/50 border-emerald-500/40 text-emerald-300'
-                }`}
-                title="Open Android Studio Desktop Guide & Project"
-              >
-                <Smartphone className="w-3.5 h-3.5" />
-                <span>Android Studio</span>
-              </button>
-
               {onOpenSettings && (
                 <button
                   onClick={onOpenSettings}

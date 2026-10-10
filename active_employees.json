@@ -1,5 +1,5 @@
 {
-  "version": "3.1.1",
+  "version": "3.1.2",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -96,10 +96,10 @@
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "3.1.1",
-    "build": "Build 311 (LocFinder Pro v3.1.1)",
-    "releaseNotes": "Official Live Production Release v3.1.1: Self-service 1-device hardware lock reset upon reinstallation, GitHub secret protection, and stability improvements.",
+    "version": "3.1.2",
+    "build": "Build 312 (LocFinder Pro v3.1.2)",
+    "releaseNotes": "Official Live Release v3.1.2: Fixed Sparkles icon render exception, self-service 1-device hardware relock, and performance optimizations.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.1.1/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.1.2/LocFinderPro.apk"
   }
 }

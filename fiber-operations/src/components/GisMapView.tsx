@@ -89,7 +89,7 @@ export const GisMapView: React.FC<GisMapViewProps> = ({
         <div className="glass-card rounded-2xl px-3.5 py-2.5 flex items-center gap-2 pointer-events-auto border border-white/10 shadow-xl max-w-xs w-full">
           <div className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
           <span className="text-xs font-semibold text-white tracking-tight">
-            VKA Optical GIS Network
+            LocFinder GIS Network
           </span>
           <span className="text-[10px] font-mono text-neutral-400 ml-auto">
             Live OTDR

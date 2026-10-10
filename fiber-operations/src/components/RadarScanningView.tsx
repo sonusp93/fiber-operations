@@ -10,13 +10,23 @@ import {
   Crosshair, 
   Search,
   Activity,
-  Sparkles,
+  Sparkles as LucideSparkles,
   Info,
   Trash2,
   Power,
   Layers,
   ArrowRight
 } from 'lucide-react';
+
+const Sparkles = LucideSparkles || ((props: any) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.937A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .962 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.962 0z" />
+    <path d="M20 3v4" />
+    <path d="M22 5h-4" />
+    <path d="M4 17v2" />
+    <path d="M5 18H3" />
+  </svg>
+));
 import { FAT_DATASET, FatRecord, HUB_DATASET, RSU_DATASET } from '../data/telecomDataset';
 import { Fat3DModelIcon, Hub3DModelIcon, Rsu3DModelIcon } from './ModelIcons';
 
@@ -246,7 +256,7 @@ const RadarScanningViewComp: React.FC<RadarScanningViewProps> = ({
         () => {
           setGpsPrecisionText('Base Station Fixed (10.0261° N)');
         },
-        { enableHighAccuracy: true, timeout: 6000, maximumAge: 30000 }
+        { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 }
       );
 
       try {
@@ -259,7 +269,7 @@ const RadarScanningViewComp: React.FC<RadarScanningViewProps> = ({
             setGpsPrecisionText(acc);
           },
           () => {},
-          { enableHighAccuracy: true, maximumAge: 10000 }
+          { enableHighAccuracy: false, maximumAge: 60000 }
         );
         watchIdRef.current = id;
       } catch {
@@ -425,6 +435,17 @@ const RadarScanningViewComp: React.FC<RadarScanningViewProps> = ({
 
     return list;
   }, [scannedNodes, activeFilter, localSearch, isResultsWiped]);
+
+  const [visibleLimit, setVisibleLimit] = useState(50);
+
+  // Reset visible limit when filter, search, or radius changes
+  useEffect(() => {
+    setVisibleLimit(50);
+  }, [activeFilter, localSearch, radiusKm, isResultsWiped]);
+
+  const displayedNodes = useMemo(() => {
+    return filteredNodes.slice(0, visibleLimit);
+  }, [filteredNodes, visibleLimit]);
 
   // Breakdown Counts
   const fatCount = useMemo(() => scannedNodes.filter((n) => n.type === 'FAT').length, [scannedNodes]);
@@ -797,8 +818,8 @@ const RadarScanningViewComp: React.FC<RadarScanningViewProps> = ({
                   </span>
                 </div>
 
-                {/* THE UNIFIED CARD LIST (PRESENTED ONCE WITH ALL ACTIONS INTEGRATED) */}
-                {filteredNodes.map((node) => {
+                {/* THE UNIFIED CARD LIST (PAGINATED TO PREVENT DOM FREEZING / STICKING) */}
+                {displayedNodes.map((node) => {
                   const isSelected = selectedNode?.id === node.id;
 
                   return (
@@ -939,6 +960,24 @@ const RadarScanningViewComp: React.FC<RadarScanningViewProps> = ({
                     </div>
                   );
                 })}
+
+                {/* SHOW MORE PAGINATION CONTROLS TO PREVENT DOM FREEZING */}
+                {filteredNodes.length > visibleLimit && (
+                  <div className="pt-3 text-center flex items-center justify-center gap-2 flex-wrap">
+                    <button
+                      onClick={() => setVisibleLimit((prev) => prev + 50)}
+                      className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono font-bold text-xs cursor-pointer shadow-lg shadow-cyan-500/25 active:scale-95 transition-all"
+                    >
+                      <span>Show More Terminals (+50)</span>
+                    </button>
+                    <button
+                      onClick={() => setVisibleLimit(filteredNodes.length)}
+                      className="px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/15 text-white font-mono font-bold text-xs cursor-pointer active:scale-95 transition-all"
+                    >
+                      <span>Show All ({filteredNodes.length})</span>
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>

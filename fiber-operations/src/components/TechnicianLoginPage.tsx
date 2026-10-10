@@ -27,22 +27,23 @@ export const TechnicianLoginPage: React.FC<TechnicianLoginPageProps> = ({
   onLoginSuccess,
   isLightMode = false
 }) => {
-  const [employeeIdentifier, setEmployeeIdentifier] = useState('TECH-KRL-8092');
-  const [fieldPasscode, setFieldPasscode] = useState('1234');
+  const [employeeIdentifier, setEmployeeIdentifier] = useState('');
+  const [fieldPasscode, setFieldPasscode] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [isSyncingGithub, setIsSyncingGithub] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [githubSyncMsg, setGithubSyncMsg] = useState<string | null>(null);
   const [showGithubConfig, setShowGithubConfig] = useState(false);
   const [githubUrl, setGithubUrl] = useState(() => CompanySecurityService.getGitHubManifestUrl());
+  const [isDeviceMismatchState, setIsDeviceMismatchState] = useState(false);
 
   // Auto-sync with GitHub on mount (non-blocking)
   useEffect(() => {
     CompanySecurityService.syncWithGitHubPolicy();
   }, []);
 
-  // Handle Form Submission: Direct GitHub Verified Login (NO OTP!)
-  const handleLoginSubmit = (e?: React.FormEvent) => {
+  // Handle Form Submission: 1-Device Hardware Locked Verification
+  const handleLoginSubmit = async (e?: React.FormEvent, forceDeviceRelock = false) => {
     if (e) e.preventDefault();
     if (!employeeIdentifier.trim()) {
       setErrorMsg('Please enter your Employee ID or Name');
@@ -51,20 +52,33 @@ export const TechnicianLoginPage: React.FC<TechnicianLoginPageProps> = ({
 
     setErrorMsg(null);
     setIsVerifying(true);
+    setIsDeviceMismatchState(false);
 
-    setTimeout(() => {
-      const result = CompanySecurityService.verifyEmployee(employeeIdentifier, fieldPasscode);
+    try {
+      const deviceId = await CompanySecurityService.getDeviceHardwareId();
+      const result = await CompanySecurityService.verifyEmployee(
+        employeeIdentifier,
+        fieldPasscode,
+        deviceId,
+        forceDeviceRelock
+      );
 
       if (result.isRevoked) {
         setIsVerifying(false);
         setErrorMsg(result.error || 'Access Denied: Resigned Employee ID');
-        // Execute instant remote wipe for resigned personnel
-        CompanySecurityService.executeCompanyDataWipe('Resigned employee separation detected during GitHub credential check', {
+        CompanySecurityService.executeCompanyDataWipe('Resigned employee separation detected during credential check', {
           technicianId: employeeIdentifier,
           technicianName: 'Resigned Personnel',
           phoneNumber: '',
           loginTimestamp: Date.now()
         });
+        return;
+      }
+
+      if (result.isDeviceMismatch) {
+        setIsVerifying(false);
+        setIsDeviceMismatchState(true);
+        setErrorMsg(result.error || 'Device lock mismatch.');
         return;
       }
 
@@ -76,7 +90,8 @@ export const TechnicianLoginPage: React.FC<TechnicianLoginPageProps> = ({
           phoneNumber: emp.phone,
           role: emp.role,
           loginTimestamp: Date.now(),
-          githubVerified: true
+          githubVerified: true,
+          registeredDeviceId: emp.registeredDeviceId || deviceId
         };
 
         try {
@@ -88,9 +103,12 @@ export const TechnicianLoginPage: React.FC<TechnicianLoginPageProps> = ({
         onLoginSuccess(profile);
       } else {
         setIsVerifying(false);
-        setErrorMsg(result.error || 'Invalid credentials. Check Employee ID or Field Passcode (Default: 1234).');
+        setErrorMsg(result.error || 'Invalid credentials.');
       }
-    }, 450);
+    } catch {
+      setIsVerifying(false);
+      setErrorMsg('Error verifying credentials. Please try again.');
+    }
   };
 
   // Sync with Company GitHub Repository
@@ -186,9 +204,22 @@ export const TechnicianLoginPage: React.FC<TechnicianLoginPageProps> = ({
 
           {/* Error Message */}
           {errorMsg && (
-            <div className="p-3.5 rounded-2xl border border-red-500/50 bg-red-500/10 text-red-300 text-xs flex items-center gap-2.5 animate-in fade-in duration-150">
-              <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-              <span>{errorMsg}</span>
+            <div className="p-3.5 rounded-2xl border border-red-500/50 bg-red-500/10 text-red-300 text-xs flex flex-col gap-2.5 animate-in fade-in duration-150">
+              <div className="flex items-center gap-2.5">
+                <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+                <span>{errorMsg}</span>
+              </div>
+              {isDeviceMismatchState && (
+                <button
+                  type="button"
+                  onClick={() => handleLoginSubmit(undefined, true)}
+                  disabled={isVerifying}
+                  className="mt-1 w-full py-2 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-amber-500/20 active:scale-95"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isVerifying ? 'animate-spin' : ''}`} />
+                  <span>Reset & Activate On This Device</span>
+                </button>
+              )}
             </div>
           )}
 
@@ -201,7 +232,7 @@ export const TechnicianLoginPage: React.FC<TechnicianLoginPageProps> = ({
           )}
 
           {/* FOCUSED LOGIN FORM FOR THE FIELD ENGINEER */}
-          <form onSubmit={handleLoginSubmit} className="space-y-4 pt-1">
+          <form onSubmit={handleLoginSubmit} autoComplete="off" className="space-y-4 pt-1">
             <div className="space-y-1.5">
               <label className={`text-xs font-mono font-bold block ${isLightMode ? 'text-slate-700' : 'text-slate-300'}`}>
                 Employee ID or Technician Name <span className="text-cyan-400">*</span>
@@ -214,12 +245,14 @@ export const TechnicianLoginPage: React.FC<TechnicianLoginPageProps> = ({
                 <UserCheck className="w-4 h-4 text-cyan-400 shrink-0" />
                 <input
                   type="text"
+                  name="emp_id_no_autofill"
+                  autoComplete="off"
                   value={employeeIdentifier}
                   onChange={(e) => {
                     setEmployeeIdentifier(e.target.value);
                     setErrorMsg(null);
                   }}
-                  placeholder="e.g. TECH-KRL-8092 or Sonu"
+                  placeholder="e.g. EMP001 or Sonu S Pushpan"
                   className="w-full bg-transparent text-sm font-mono font-bold focus:outline-none"
                 />
               </div>
@@ -240,6 +273,8 @@ export const TechnicianLoginPage: React.FC<TechnicianLoginPageProps> = ({
                 <Key className="w-4 h-4 text-cyan-400 shrink-0" />
                 <input
                   type="password"
+                  name="pass_no_autofill"
+                  autoComplete="new-password"
                   value={fieldPasscode}
                   onChange={(e) => setFieldPasscode(e.target.value)}
                   placeholder="Enter 4-digit passcode"

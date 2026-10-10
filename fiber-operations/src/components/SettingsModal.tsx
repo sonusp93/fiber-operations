@@ -5,7 +5,7 @@ import {
   Sun, 
   RefreshCw, 
   Check, 
-  Sparkles, 
+  Sparkles as LucideSparkles,
   ShieldCheck, 
   Image as ImageIcon, 
   Upload, 
@@ -39,6 +39,17 @@ import { UserAuthProfile } from './TechnicianLoginPage';
 import { CompanySecurityService } from '../services/companySecurityService';
 import { AndroidStudioModal } from './AndroidStudioModal';
 
+// Crash-proof Sparkles icon fallback
+const Sparkles = LucideSparkles || ((props: any) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.937A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .962 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.962 0z" />
+    <path d="M20 3v4" />
+    <path d="M22 5h-4" />
+    <path d="M4 17v2" />
+    <path d="M5 18H3" />
+  </svg>
+));
+
 export type PerformanceMode = 'BALANCED' | 'HIGH' | 'BATTERY_SAVER';
 
 interface SettingsModalProps {
@@ -57,6 +68,7 @@ interface SettingsModalProps {
   onToggleGps?: () => void;
   isBatterySavingGps?: boolean;
   onToggleBatterySavingGps?: () => void;
+  onTriggerOtaUpdate?: (updateInfo: any) => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -74,7 +86,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   isGpsEnabled: parentGpsEnabled,
   onToggleGps: parentToggleGps,
   isBatterySavingGps: parentBatterySavingGps,
-  onToggleBatterySavingGps: parentToggleBatterySavingGps
+  onToggleBatterySavingGps: parentToggleBatterySavingGps,
+  onTriggerOtaUpdate
 }) => {
   // 0. ANDROID STUDIO DESKTOP WORKSPACE MODAL
   const [isAndroidModalOpen, setIsAndroidModalOpen] = useState(false);
@@ -160,28 +173,48 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [isInstallingUpdate, setIsInstallingUpdate] = useState(false);
   const [updateInstallSuccess, setUpdateInstallSuccess] = useState<string | null>(null);
 
-  const handleCheckUpdate = () => {
+  const handleCheckUpdate = async () => {
     setIsCheckingUpdate(true);
     setAvailableUpdate(null);
     setUpdateInstallSuccess(null);
-    setTimeout(() => {
+    try {
+      const syncRes = await CompanySecurityService.syncWithGitHubPolicy();
+      const latest = syncRes.policy.latestAppUpdate || CompanySecurityService.getLocalPolicy().latestAppUpdate;
+
+      if (latest && latest.version !== CompanySecurityService.getCurrentInstalledVersion().version) {
+        setAvailableUpdate({
+          version: `v${latest.version}`,
+          build: latest.build || `Build ${latest.version}`,
+          releaseNotes: latest.releaseNotes || 'New security update available from company GitHub repository.'
+        });
+        if (onTriggerOtaUpdate) {
+          onTriggerOtaUpdate(latest);
+          onClose();
+        }
+      } else {
+        setUpdateInstallSuccess(`App is up to date! Currently running v${CompanySecurityService.getCurrentInstalledVersion().version} (${CompanySecurityService.getCurrentInstalledVersion().build}).`);
+      }
+    } catch {
+      setUpdateInstallSuccess(`App is up to date! Currently running v${CompanySecurityService.getCurrentInstalledVersion().version}.`);
+    } finally {
       setIsCheckingUpdate(false);
-      // Simulate real over-the-air update availability check
-      setAvailableUpdate({
-        version: 'v2.5.2',
-        build: 'Build 144 (Hotfix Release)',
-        releaseNotes: 'Optimized 120Hz LiDAR engine, cold thermal throttling, & 5 new high-contrast themes.'
-      });
-    }, 1200);
+    }
   };
 
   const handleInstallUpdate = () => {
-    setIsInstallingUpdate(true);
-    setTimeout(() => {
-      setIsInstallingUpdate(false);
-      setAvailableUpdate(null);
-      setUpdateInstallSuccess('Update v2.5.2 installed successfully! Field engine refreshed by Sonu.');
-    }, 1800);
+    if (availableUpdate && onTriggerOtaUpdate) {
+      onTriggerOtaUpdate({
+        version: availableUpdate.version.replace(/^v/, ''),
+        build: availableUpdate.build,
+        releaseNotes: availableUpdate.releaseNotes,
+        isMandatory: true,
+        downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v1.0.3/LocFinderPro.apk'
+      });
+      onClose();
+    } else {
+      window.open('https://github.com/sonusp93/fiber-operations/releases', '_blank');
+      setUpdateInstallSuccess('Redirecting to official GitHub Releases page...');
+    }
   };
 
   // 6. GITHUB OTA REMOTE DATA WIPE FOR RESIGNED EMPLOYEES
@@ -312,7 +345,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   Field Engine Settings
                 </h2>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 font-bold border border-cyan-500/30">
-                  v2.4.8
+                  v1.0.0
                 </span>
               </div>
               <span className={`text-[11px] font-mono ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>
@@ -379,49 +412,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               )}
             </div>
           )}
-
-          {/* ANDROID STUDIO DESKTOP WORKSPACE & EXPORT */}
-          <div className={`p-4 rounded-2xl border space-y-3.5 ${
-            isLightMode 
-              ? 'bg-gradient-to-r from-emerald-50/80 to-cyan-50/80 border-emerald-200' 
-              : 'bg-gradient-to-r from-emerald-950/20 to-cyan-950/20 border-emerald-500/30'
-          }`}>
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-cyan-500 text-slate-950 flex items-center justify-center font-black shadow-md shadow-emerald-500/20 shrink-0">
-                  <Smartphone className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h4 className="text-xs font-black tracking-tight">
-                      Android Studio Desktop Workspace
-                    </h4>
-                    <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">
-                      PROJECT READY (./android)
-                    </span>
-                  </div>
-                  <p className={`text-[11px] mt-1 leading-relaxed ${isLightMode ? 'text-slate-600' : 'text-slate-300'}`}>
-                    Converted to native Android Studio project with Gradle 8, AndroidManifest permissions, and APK generation support.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between gap-2 flex-wrap pt-1">
-              <div className="text-[10.5px] font-mono text-slate-400">
-                Package: <code className="text-cyan-400 font-bold">com.vka.telecom.operations</code>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setIsAndroidModalOpen(true)}
-                className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-black text-xs font-mono flex items-center gap-1.5 cursor-pointer shadow-md shadow-emerald-500/20 transition-all active:scale-95"
-              >
-                <FolderCheck className="w-4 h-4" />
-                <span>Open Android Studio Guide &amp; Code</span>
-              </button>
-            </div>
-          </div>
 
           {/* 2. 120 FPS SMOOTH TOGGLE & HARDWARE REFRESH RATE */}
           <div className={`p-4 rounded-2xl border flex items-center justify-between ${
@@ -1163,7 +1153,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </h4>
             </div>
             <p className={`text-[10.5px] font-mono ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>
-              Version 2.4.8 (Build 120) &middot; Telecom Field OS
+              LocFinder Pro v{CompanySecurityService.getCurrentInstalledVersion().version} ({CompanySecurityService.getCurrentInstalledVersion().build}) &middot; Official Release
             </p>
           </div>
 
