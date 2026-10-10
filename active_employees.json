@@ -1,5 +1,5 @@
 {
-  "version": "3.1.3",
+  "version": "3.1.4",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -96,10 +96,10 @@
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "3.1.3",
-    "build": "Build 313 (LocFinder Pro v3.1.3)",
-    "releaseNotes": "Official Live Release v3.1.3: Purged Service Worker PWA cache, relative asset loading, and 100% crash-proof Sparkles fallback.",
+    "version": "3.1.4",
+    "build": "Build 314 (LocFinder Pro v3.1.4)",
+    "releaseNotes": "Official Live Release v3.1.4: Fixed Tailwind CSS styling engine integration, restored full cyan glassmorphism theme and dark UI.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.1.3/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.1.4/LocFinderPro.apk"
   }
 }
