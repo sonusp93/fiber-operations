@@ -8,7 +8,8 @@
       "phone": "+91 98470 12345",
       "department": "Optical Transmission & FAT Maintenance",
       "status": "ACTIVE",
-      "fieldPasscode": "1234"
+      "fieldPasscode": "1234",
+      "registeredDeviceId": "DEV-B30A616B38"
     },
     {
       "employeeId": "EMP002",
