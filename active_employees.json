@@ -7,7 +7,7 @@
       "role": "Senior Field Telecom Engineer",
       "phone": "+91 98470 12345",
       "department": "Optical Transmission & FAT Maintenance",
-      "status": "REVOKED",
+      "status": "ACTIVE",
       "fieldPasscode": "1234",
       "registeredDeviceId": "DEV-B30A616B38"
     },
@@ -28,8 +28,7 @@
       "phone": "+91 98470 12347",
       "department": "Field Operations",
       "status": "ACTIVE",
-      "fieldPasscode": "1234",
-      "registeredDeviceId": "DEV-73EB53263C"
+      "fieldPasscode": "1234"
     },
     {
       "employeeId": "EMP004",
@@ -95,7 +94,7 @@
       "fieldPasscode": "1234"
     }
   ],
-  "revokedTechnicianIds": ["EMP001", "TECH-KRL-8092"],
+  "revokedTechnicianIds": ["TECH-KRL-8092"],
   "latestAppUpdate": {
     "version": "1.1.0",
     "build": "Build 110 (LocFinder Pro v1.1.0)",
