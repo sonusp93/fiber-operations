@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Concentric Optical Radar Rings -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#1E293B"
+        android:strokeWidth="1.5"
+        android:pathData="M54,54m-38,0a38,38 0 1,0 76,0a38,38 0 1,0 -76,0" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#0284C7"
+        android:strokeWidth="2.0"
+        android:pathData="M54,54m-26,0a26,26 0 1,0 52,0a26,26 0 1,0 -52,0" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#06B6D4"
+        android:strokeWidth="2.5"
+        android:pathData="M54,54m-14,0a14,14 0 1,0 28,0a14,14 0 1,0 -28,0" />
+
+    <!-- Crosshair Telemetry Lines -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#38BDF8"
+        android:strokeWidth="2.0"
+        android:pathData="M54,16 L54,32 M54,76 L54,92 M16,54 L32,54 M76,54 L92,54" />
+
+    <!-- Central Glowing Fiber Pin Target -->
+    <path
+        android:fillColor="#22D3EE"
+        android:pathData="M54,38 C47,38 42,43 42,50 C42,59 54,70 54,70 C54,70 66,59 66,50 C66,43 61,38 54,38 Z" />
+    <path
+        android:fillColor="#0D111E"
+        android:pathData="M54,50m-4,0a4,4 0 1,0 8,0a4,4 0 1,0 -8,0" />
+</vector>
