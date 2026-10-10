@@ -152,13 +152,13 @@ export const DEFAULT_OFFICIAL_EMPLOYEES: CompanyEmployee[] = [
 
 // Current installed app version (LocFinder Pro Official Release)
 export const CURRENT_APP_VERSION = {
-  version: '3.1.5',
-  build: 'Build 315 (LocFinder Pro v3.1.5)'
+  version: '3.2.0',
+  build: 'Build 320 (LocFinder Pro v3.2.0)'
 };
 
 // Default corporate policy template pointing to company GitHub repository
 const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
-  version: '3.1.5',
+  version: '3.2.0',
   lastUpdated: new Date().toISOString(),
   globalWipeRevision: 1,
   revokedTechnicianIds: [],
@@ -167,12 +167,12 @@ const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
   githubRepoSource: 'https://raw.githubusercontent.com/sonusp93/fiber-operations/main/active_employees.json',
   activeEmployees: DEFAULT_OFFICIAL_EMPLOYEES,
   latestAppUpdate: {
-    version: '3.1.5',
-    build: 'Build 315 (Official GitHub Release)',
-    releaseNotes: 'Official Release v3.1.5: Configured Tailwind CSS v4 styling engine, in-app mandatory OTA updates, accurate node search, and working top header logout.',
+    version: '3.2.0',
+    build: 'Build 320 (Official GitHub Release)',
+    releaseNotes: 'Official Release v3.2.0: Instant public GitHub policy fetch with cache-busting timestamp, in-app mandatory firmware updates, clean settings page, and accurate multi-field search.',
     isMandatory: true,
     publishedAt: new Date().toISOString(),
-    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v3.1.5/LocFinderPro.apk'
+    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v3.2.0/LocFinderPro.apk'
   }
 };
 
@@ -391,24 +391,41 @@ export class CompanySecurityService {
     updateInfo?: AppOtaUpdateInfo;
   }> {
     const token = this.getGithubToken();
-    const repoPath = 'https://api.github.com/repos/sonusp93/fiber-operations/contents/active_employees.json';
     this.recordHeartbeat();
 
     try {
-      // Authenticated GitHub Contents API fetch (works 100% for private repositories!)
-      const response = await fetch(repoPath, {
-        headers: {
-          'Authorization': `token ${token}`,
-          'Accept': 'application/vnd.github.v3+json'
-        },
-        cache: 'no-store'
-      });
+      let data: any = null;
 
-      if (response.ok) {
-        const fileData = await response.json();
-        const contentStr = atob(fileData.content);
-        const data = JSON.parse(contentStr);
-        
+      // 1. Fetch public raw GitHub file with cache-busting timestamp (works 100% without token!)
+      try {
+        const rawRes = await fetch(`https://raw.githubusercontent.com/sonusp93/fiber-operations/main/active_employees.json?t=${Date.now()}`, {
+          cache: 'no-store'
+        });
+        if (rawRes.ok) {
+          data = await rawRes.json();
+        }
+      } catch {}
+
+      // 2. If raw fetch failed and token is available, try authenticated GitHub API
+      if (!data && token && token.trim().length > 0) {
+        try {
+          const repoPath = 'https://api.github.com/repos/sonusp93/fiber-operations/contents/active_employees.json';
+          const ghRes = await fetch(repoPath, {
+            headers: {
+              'Authorization': `token ${token.trim()}`,
+              'Accept': 'application/vnd.github.v3+json'
+            },
+            cache: 'no-store'
+          });
+          if (ghRes.ok) {
+            const fileData = await ghRes.json();
+            const contentStr = atob(fileData.content);
+            data = JSON.parse(contentStr);
+          }
+        } catch {}
+      }
+
+      if (data) {
         // Extract revoked IDs from GitHub file
         const revokedIds: string[] = Array.isArray(data.revokedTechnicianIds) 
           ? data.revokedTechnicianIds 
@@ -429,19 +446,20 @@ export class CompanySecurityService {
 
         let updateObj: AppOtaUpdateInfo = data.latestAppUpdate || DEFAULT_COMPANY_POLICY.latestAppUpdate!;
 
-        // Also check live GitHub Releases API with authorization header
+        // Also check live GitHub Releases API
         try {
-          const ghRes = await fetch('https://api.github.com/repos/sonusp93/fiber-operations/releases/latest', {
-            headers: {
-              'Authorization': `token ${token}`,
-              'Accept': 'application/vnd.github.v3+json'
-            },
+          const reqHeaders: Record<string, string> = { 'Accept': 'application/vnd.github.v3+json' };
+          if (token && token.trim().length > 0) {
+            reqHeaders['Authorization'] = `token ${token.trim()}`;
+          }
+          const relRes = await fetch(`https://api.github.com/repos/sonusp93/fiber-operations/releases/latest?t=${Date.now()}`, {
+            headers: reqHeaders,
             cache: 'no-store'
           });
-          if (ghRes.ok) {
-            const ghData = await ghRes.json();
+          if (relRes.ok) {
+            const ghData = await relRes.json();
             const tagVer = (ghData.tag_name || '').replace(/^v/, '');
-            if (tagVer && tagVer !== CURRENT_APP_VERSION.version) {
+            if (tagVer) {
               updateObj = {
                 version: tagVer,
                 build: ghData.name || `LocFinder Pro v${tagVer}`,
@@ -463,7 +481,7 @@ export class CompanySecurityService {
           revokedTechnicianIds: revokedIds,
           revokedPhoneNumbers: revokedPhones,
           revocationReason: data.revocationReason || 'Resigned Employee Deauthorization via GitHub Manifest',
-          githubRepoSource: url,
+          githubRepoSource: 'https://raw.githubusercontent.com/sonusp93/fiber-operations/main/active_employees.json',
           activeEmployees: employees,
           latestAppUpdate: updateObj
         };

@@ -1,5 +1,5 @@
 {
-  "version": "3.1.5",
+  "version": "3.2.0",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -96,10 +96,10 @@
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "3.1.5",
-    "build": "Build 315 (LocFinder Pro v3.1.5)",
-    "releaseNotes": "Official Live Release v3.1.5: Configured Tailwind CSS v4 styling engine, in-app mandatory OTA updates, accurate node search, and working top header logout.",
+    "version": "3.2.0",
+    "build": "Build 320 (LocFinder Pro v3.2.0)",
+    "releaseNotes": "Official Live Major Release v3.2.0: Instant public GitHub policy fetch with cache-busting timestamp, in-app mandatory firmware updates, clean settings page, and accurate multi-field search.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.1.5/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.2.0/LocFinderPro.apk"
   }
 }
