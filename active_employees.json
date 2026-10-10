@@ -1,5 +1,5 @@
 {
-  "version": "1.4.0",
+  "version": "1.5.0",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -19,7 +19,7 @@
       "department": "Field Operations",
       "status": "ACTIVE",
       "fieldPasscode": "1234",
-      "registeredDeviceId": "DEV-B30A616B38"
+      "registeredDeviceId": "DEV-73EB53263C"
     },
     {
       "employeeId": "EMP003",
@@ -29,7 +29,7 @@
       "department": "Field Operations",
       "status": "ACTIVE",
       "fieldPasscode": "1234",
-      "registeredDeviceId": "DEV-73EB53263C"
+      "registeredDeviceId": "DEV-A91F24101B"
     },
     {
       "employeeId": "EMP004",
@@ -38,7 +38,8 @@
       "phone": "+91 98470 12348",
       "department": "Field Operations",
       "status": "ACTIVE",
-      "fieldPasscode": "1234"
+      "fieldPasscode": "1234",
+      "registeredDeviceId": "DEV-C82D39412E"
     },
     {
       "employeeId": "EMP005",
@@ -47,7 +48,8 @@
       "phone": "+91 98470 12349",
       "department": "Field Operations",
       "status": "ACTIVE",
-      "fieldPasscode": "1234"
+      "fieldPasscode": "1234",
+      "registeredDeviceId": "DEV-E73A48523F"
     },
     {
       "employeeId": "EMP006",
@@ -56,7 +58,8 @@
       "phone": "+91 98470 12350",
       "department": "Field Operations",
       "status": "ACTIVE",
-      "fieldPasscode": "1234"
+      "fieldPasscode": "1234",
+      "registeredDeviceId": "DEV-F64B57634A"
     },
     {
       "employeeId": "EMP007",
@@ -65,7 +68,8 @@
       "phone": "+91 98470 12351",
       "department": "Field Operations",
       "status": "ACTIVE",
-      "fieldPasscode": "1234"
+      "fieldPasscode": "1234",
+      "registeredDeviceId": "DEV-A15C66745B"
     },
     {
       "employeeId": "EMP008",
@@ -74,7 +78,8 @@
       "phone": "+91 98470 12352",
       "department": "Field Operations",
       "status": "ACTIVE",
-      "fieldPasscode": "1234"
+      "fieldPasscode": "1234",
+      "registeredDeviceId": "DEV-B26D75856C"
     },
     {
       "employeeId": "EMP009",
@@ -83,7 +88,8 @@
       "phone": "+91 98470 12353",
       "department": "Field Operations",
       "status": "ACTIVE",
-      "fieldPasscode": "1234"
+      "fieldPasscode": "1234",
+      "registeredDeviceId": "DEV-C37E84967D"
     },
     {
       "employeeId": "EMP010",
@@ -92,15 +98,16 @@
       "phone": "+91 98470 12354",
       "department": "Field Operations",
       "status": "ACTIVE",
-      "fieldPasscode": "1234"
+      "fieldPasscode": "1234",
+      "registeredDeviceId": "DEV-D48F93078E"
     }
   ],
   "revokedTechnicianIds": ["TECH-KRL-8092"],
   "latestAppUpdate": {
-    "version": "1.4.0",
-    "build": "Build 140 (LocFinder Pro v1.4.0)",
-    "releaseNotes": "Official Live OTA Release v1.4.0: Enforces in-app background download manager, native package installer, EMP003 1-device hardware lock, 120 FPS paginated radar discovery, and instant real-time GitHub sync.",
+    "version": "1.5.0",
+    "build": "Build 150 (LocFinder Pro v1.5.0)",
+    "releaseNotes": "Official Live OTA Release v1.5.0: Fixed GitHub API authentication headers for public repository, 1-device 1-user hardware lock across all EMP001-EMP010 accounts, native in-app download manager, and instant OTA sync.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v1.4.0/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v1.5.0/LocFinderPro.apk"
   }
 }
