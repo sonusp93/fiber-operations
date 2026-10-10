@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { App as CapApp } from '@capacitor/app';
 import { FatRecord, loadTelecomDatasetAsync, isTelecomDataReady } from './data/telecomDataset';
 import { TopHeaderBar } from './components/TopHeaderBar';
 import { VideoBottomNavPill, VideoTabType } from './components/VideoBottomNavPill';
@@ -10,11 +11,10 @@ import { NavigationPopupModal } from './components/NavigationPopupModal';
 import { NetworkHierarchyView } from './components/NetworkHierarchyView';
 import { FatDetailsUnifiedView } from './components/FatDetailsUnifiedView';
 import { SettingsModal } from './components/SettingsModal';
-import { SwipeBackGesture } from './components/SwipeBackGesture';
 import { RadarScanningView } from './components/RadarScanningView';
 import { TechnicianLoginPage, UserAuthProfile } from './components/TechnicianLoginPage';
 import { LiveVideoWallpaper } from './components/LiveVideoWallpaper';
-import { CompanySecurityService, AppOtaUpdateInfo } from './services/companySecurityService';
+import { CompanySecurityService, AppOtaUpdateInfo, DEFAULT_OFFICIAL_EMPLOYEES } from './services/companySecurityService';
 import { DeviceWipedLockdownScreen } from './components/DeviceWipedLockdownScreen';
 import { MandatoryOtaUpdateModal } from './components/MandatoryOtaUpdateModal';
 import { Zap, RefreshCw } from 'lucide-react';
@@ -30,20 +30,19 @@ export default function App() {
       });
     }
   }, [isDataReady]);
-  // 1. TECHNICIAN AUTHENTICATION & LOGIN STATE (Auto-authenticated default profile)
-  const [currentUser, setCurrentUser] = useState<UserAuthProfile>(() => {
+  // 1. TECHNICIAN AUTHENTICATION & SESSION PERSISTENCE (Keeps session logged in when app closes)
+  const [currentUser, setCurrentUser] = useState<UserAuthProfile | null>(() => {
     try {
       const saved = localStorage.getItem('locfinder_auth_user');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed: UserAuthProfile = JSON.parse(saved);
+        const check = CompanySecurityService.isTechnicianRevoked(parsed);
+        if (!check.isRevoked) {
+          return parsed;
+        }
+      }
     } catch {}
-    return {
-      technicianId: 'TECH-KRL-8092',
-      technicianName: 'Sonu',
-      phoneNumber: '+91 98470 12345',
-      role: 'Senior Field Telecom Engineer',
-      loginTimestamp: Date.now(),
-      githubVerified: true
-    };
+    return null;
   });
 
   const [isDeviceWiped, setIsDeviceWiped] = useState<boolean>(() => {
@@ -180,8 +179,23 @@ export default function App() {
 
     performStartupScan();
 
+    // Background interval check every 3 minutes for automatic revocation & update detection
+    const interval = setInterval(async () => {
+      if (!currentUser) return;
+      try {
+        const scanRes = await CompanySecurityService.autoScanGitHubUpdatesAndSecurity(currentUser);
+        if (scanRes.wiped) {
+          setIsDeviceWiped(true);
+          setCurrentUser(null);
+        } else if (scanRes.updateAvailable && scanRes.updateInfo) {
+          setPendingMandatoryUpdate(scanRes.updateInfo);
+        }
+      } catch {}
+    }, 180000);
+
     return () => {
       isMounted = false;
+      clearInterval(interval);
       window.removeEventListener('company_data_wipe_executed', handleWiped);
     };
   }, [currentUser]);
@@ -242,8 +256,39 @@ export default function App() {
     }
   }, [activeNavTarget, selectedFat, isSettingsOpen, currentTab]);
 
-  // Android Native Back Gesture & History Listener
+  // Android Native Back Gesture & Hardware Back Button Listener via Capacitor App Plugin
   useEffect(() => {
+    let isSubscribed = true;
+
+    const setupBackListener = async () => {
+      try {
+        const handler = await CapApp.addListener('backButton', () => {
+          if (!isSubscribed) return;
+
+          if (activeNavTarget) {
+            setActiveNavTarget(null);
+          } else if (selectedFat) {
+            setSelectedFat(null);
+          } else if (isSettingsOpen) {
+            setIsSettingsOpen(false);
+          } else if (currentTab !== 'HOME') {
+            setCurrentTab('HOME');
+          } else {
+            // On HOME tab with no open modals: minimize app cleanly instead of closing abruptly
+            CapApp.minimizeApp();
+          }
+        });
+
+        return () => {
+          handler.remove();
+        };
+      } catch {
+        // Fallback for browser popstate
+      }
+    };
+
+    const cleanupPromise = setupBackListener();
+
     const handleNativePopState = () => {
       if (activeNavTarget) {
         setActiveNavTarget(null);
@@ -260,6 +305,8 @@ export default function App() {
     window.addEventListener('backbutton', handleNativePopState);
 
     return () => {
+      isSubscribed = false;
+      cleanupPromise.then(cleanup => cleanup && cleanup()).catch(() => {});
       window.removeEventListener('popstate', handleNativePopState);
       window.removeEventListener('backbutton', handleNativePopState);
     };
@@ -351,23 +398,23 @@ export default function App() {
   // INSTANT BRANDED DATA INITIALIZATION SCREEN
   if (!isDataReady) {
     return (
-      <div className="w-screen h-screen flex flex-col items-center justify-center bg-[#07090f] text-white p-6 select-none">
+      <div className="w-screen h-screen flex flex-col items-center justify-center bg-black text-white p-6 select-none animate-in zoom-in-90 fade-in duration-500">
         <div className="relative flex items-center justify-center mb-6">
-          <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-[0_0_40px_rgba(6,182,212,0.4)] animate-bounce">
-            <Zap className="w-8 h-8 fill-white text-white" />
+          <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-[0_0_50px_rgba(6,182,212,0.5)] transform hover:scale-105 transition-transform duration-300">
+            <Zap className="w-10 h-10 fill-white text-white" />
           </div>
-          <div className="absolute -inset-3 rounded-full border border-cyan-500/30 animate-ping pointer-events-none" />
+          <div className="absolute -inset-4 rounded-full border border-cyan-500/40 animate-ping pointer-events-none" />
         </div>
 
-        <h1 className="text-xl sm:text-2xl font-black tracking-tight mb-2 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-blue-400">
-          VKA FIBER OPERATIONS
+        <h1 className="text-2xl sm:text-3xl font-black tracking-tight mb-2 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-blue-400">
+          LOCFINDER PRO
         </h1>
-        <p className="text-xs font-mono text-cyan-400/80 mb-6 flex items-center gap-2">
+        <p className="text-xs font-mono text-cyan-400/90 mb-6 flex items-center gap-2">
           <RefreshCw className="w-3.5 h-3.5 animate-spin text-cyan-400" />
-          <span>Loading 56,000 Optical Terminals...</span>
+          <span>Initializing Field Telecom Network...</span>
         </p>
 
-        <div className="w-48 h-1.5 rounded-full bg-white/10 overflow-hidden relative">
+        <div className="w-52 h-1.5 rounded-full bg-white/10 overflow-hidden relative">
           <div className="h-full bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full animate-pulse w-3/4" />
         </div>
       </div>
@@ -449,8 +496,7 @@ export default function App() {
       {/* Static Background Layer */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0" />
 
-      <SwipeBackGesture canGoBack={canGoBack} onBack={handleBack} isLightMode={isLightMode}>
-        {/* PRIMARY HEADER BAR WITH SEARCH, 1KM TOGGLE & QUICK ACTIONS */}
+      {/* PRIMARY HEADER BAR WITH SEARCH, 1KM TOGGLE & QUICK ACTIONS */}
         <div className="animate-header-enter w-full relative z-40">
           <TopHeaderBar
             canGoBack={canGoBack}
@@ -468,8 +514,9 @@ export default function App() {
             onSwitchTab={(tab) => handleTabChange(tab)}
             isScrolledDown={isHomeScrolledDown}
             onScrolledSearchClick={handleScrolledSearchClick}
-            userName={currentUser ? currentUser.technicianName : 'Sonu'}
+            userName={currentUser ? currentUser.technicianName : 'Log In'}
             onLogout={handleLogout}
+            onOpenLoginModal={() => setIsLoginModalOpen(true)}
           />
         </div>
 
@@ -677,6 +724,10 @@ export default function App() {
             onToggleGps={handleToggleGpsMaster}
             isBatterySavingGps={isBatterySavingGps}
             onToggleBatterySavingGps={handleToggleBatterySavingGps}
+            onTriggerOtaUpdate={(updateInfo) => {
+              setPendingMandatoryUpdate(updateInfo);
+              setIsSettingsOpen(false);
+            }}
           />
         )}
 
@@ -735,7 +786,6 @@ export default function App() {
             isLightMode={isLightMode}
           />
         )}
-      </SwipeBackGesture>
     </div>
   );
 }

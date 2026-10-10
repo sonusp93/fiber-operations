@@ -514,8 +514,9 @@ export default function App() {
             onSwitchTab={(tab) => handleTabChange(tab)}
             isScrolledDown={isHomeScrolledDown}
             onScrolledSearchClick={handleScrolledSearchClick}
-            userName={currentUser ? currentUser.technicianName : 'Sonu'}
+            userName={currentUser ? currentUser.technicianName : 'Log In'}
             onLogout={handleLogout}
+            onOpenLoginModal={() => setIsLoginModalOpen(true)}
           />
         </div>
 

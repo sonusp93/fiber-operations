@@ -33,8 +33,8 @@ export const SearchView: React.FC<SearchViewProps> = ({
   onNavigateToRsu,
   isLightMode = false
 }) => {
-  const [searchQuery, setSearchQuery] = useState('HUB-20');
-  const [selectedFilter, setSelectedFilter] = useState<SearchCategoryFilter>('HUB');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState<SearchCategoryFilter>('ALL');
   const [showKeyboard, setShowKeyboard] = useState(true);
   const [isListening, setIsListening] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -43,37 +43,36 @@ export const SearchView: React.FC<SearchViewProps> = ({
     inputRef.current?.focus();
   }, []);
 
-  // Short-circuiting search matching (max 10 results)
+  // Accurate multi-field search matching (max 50 results)
   const searchResults = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) {
-      return FAT_DATASET.slice(0, 10);
+      return FAT_DATASET.slice(0, 20);
     }
     const matches: FatRecord[] = [];
     for (const node of FAT_DATASET) {
-      if (matches.length >= 10) break;
+      if (matches.length >= 50) break;
 
-      let categoryMatch = false;
+      const fatIdMatch = node.fatId.toLowerCase().includes(q) || node.id.toLowerCase().includes(q);
+      const hubMatch = node.hub.toLowerCase().includes(q);
+      const rsuMatch = node.rsu.toLowerCase().includes(q);
+      const ponMatch = node.ponPort.toLowerCase().includes(q) || (node.affiliatedPon && node.affiliatedPon.toLowerCase().includes(q));
+      const addrMatch = node.neAddress.toLowerCase().includes(q) || node.locality.toLowerCase().includes(q) || node.city.toLowerCase().includes(q);
+
+      let isMatch = false;
       if (selectedFilter === 'FAT') {
-        categoryMatch = node.fatId.toLowerCase().includes(q) || node.neAddress.toLowerCase().includes(q);
+        isMatch = fatIdMatch || addrMatch;
       } else if (selectedFilter === 'RSU') {
-        categoryMatch = node.rsu.toLowerCase().includes(q);
+        isMatch = rsuMatch;
       } else if (selectedFilter === 'HUB') {
-        categoryMatch = node.hub.toLowerCase().includes(q);
+        isMatch = hubMatch;
       } else if (selectedFilter === 'PON') {
-        categoryMatch = node.ponPort.toLowerCase().includes(q);
+        isMatch = ponMatch;
       } else {
-        categoryMatch =
-          node.fatId.toLowerCase().includes(q) ||
-          node.hub.toLowerCase().includes(q) ||
-          node.rsu.toLowerCase().includes(q) ||
-          node.ponPort.toLowerCase().includes(q) ||
-          node.neAddress.toLowerCase().includes(q) ||
-          node.locality.toLowerCase().includes(q) ||
-          node.city.toLowerCase().includes(q);
+        isMatch = fatIdMatch || hubMatch || rsuMatch || ponMatch || addrMatch;
       }
 
-      if (categoryMatch) {
+      if (isMatch) {
         matches.push(node);
       }
     }
@@ -100,8 +99,14 @@ export const SearchView: React.FC<SearchViewProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-[#0b0e17] text-neutral-100 select-none animate-in fade-in zoom-in-98 duration-200">
-      {/* 1. TOP SEARCH BAR WITH CANCEL BUTTON (matching video 00:01, 00:04) */}
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      className="fixed inset-0 z-50 flex flex-col justify-between items-center bg-black/80 backdrop-blur-2xl text-neutral-100 select-none animate-in fade-in duration-200 p-2 sm:p-4 overflow-hidden"
+    >
+      <div className="w-full max-w-lg h-full flex flex-col rounded-[28px] border border-white/15 bg-[#0e121e] shadow-[0_25px_60px_rgba(0,0,0,0.95)] overflow-hidden">
+        {/* 1. TOP SEARCH BAR WITH CANCEL BUTTON */}
       <div className="px-3.5 pt-3 pb-2.5 bg-[#121622]/95 border-b border-black backdrop-blur-2xl">
         <div className="flex items-center gap-2.5 max-w-md mx-auto w-full">
           {/* Search Input Box */}
@@ -354,6 +359,7 @@ export const SearchView: React.FC<SearchViewProps> = ({
             </div>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

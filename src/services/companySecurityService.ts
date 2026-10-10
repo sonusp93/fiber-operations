@@ -152,13 +152,13 @@ export const DEFAULT_OFFICIAL_EMPLOYEES: CompanyEmployee[] = [
 
 // Current installed app version (LocFinder Pro Official Release)
 export const CURRENT_APP_VERSION = {
-  version: '3.1.4',
-  build: 'Build 314 (LocFinder Pro v3.1.4)'
+  version: '3.1.5',
+  build: 'Build 315 (LocFinder Pro v3.1.5)'
 };
 
 // Default corporate policy template pointing to company GitHub repository
 const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
-  version: '3.1.4',
+  version: '3.1.5',
   lastUpdated: new Date().toISOString(),
   globalWipeRevision: 1,
   revokedTechnicianIds: [],
@@ -167,12 +167,12 @@ const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
   githubRepoSource: 'https://raw.githubusercontent.com/sonusp93/fiber-operations/main/active_employees.json',
   activeEmployees: DEFAULT_OFFICIAL_EMPLOYEES,
   latestAppUpdate: {
-    version: '3.1.4',
-    build: 'Build 314 (Official GitHub Release)',
-    releaseNotes: 'Official Release v3.1.4: Fixed Tailwind CSS styling engine integration, restored full cyan glassmorphism theme and dark UI.',
+    version: '3.1.5',
+    build: 'Build 315 (Official GitHub Release)',
+    releaseNotes: 'Official Release v3.1.5: Configured Tailwind CSS v4 styling engine, in-app mandatory OTA updates, accurate node search, and working top header logout.',
     isMandatory: true,
     publishedAt: new Date().toISOString(),
-    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v3.1.4/LocFinderPro.apk'
+    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v3.1.5/LocFinderPro.apk'
   }
 };
 

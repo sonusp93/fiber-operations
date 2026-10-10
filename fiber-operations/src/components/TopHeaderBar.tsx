@@ -31,6 +31,7 @@ interface TopHeaderBarProps {
   onScrolledSearchClick?: () => void;
   userName?: string;
   onLogout?: () => void;
+  onOpenLoginModal?: () => void;
 }
 
 export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
@@ -121,7 +122,11 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
 
   const handleUserClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setShowLogoutConfirm(true);
+    if (userName === 'Log In' || !userName || userName === 'Guest') {
+      if (onOpenLoginModal) onOpenLoginModal();
+    } else {
+      setShowLogoutConfirm(true);
+    }
   };
 
   const confirmLogout = () => {

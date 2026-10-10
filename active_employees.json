@@ -1,5 +1,5 @@
 {
-  "version": "3.1.4",
+  "version": "3.1.5",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -96,10 +96,10 @@
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "3.1.4",
-    "build": "Build 314 (LocFinder Pro v3.1.4)",
-    "releaseNotes": "Official Live Release v3.1.4: Fixed Tailwind CSS styling engine integration, restored full cyan glassmorphism theme and dark UI.",
+    "version": "3.1.5",
+    "build": "Build 315 (LocFinder Pro v3.1.5)",
+    "releaseNotes": "Official Live Release v3.1.5: Configured Tailwind CSS v4 styling engine, in-app mandatory OTA updates, accurate node search, and working top header logout.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.1.4/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.1.5/LocFinderPro.apk"
   }
 }
