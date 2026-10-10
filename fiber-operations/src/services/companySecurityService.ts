@@ -12,6 +12,8 @@
  *    company data is locked until compliance is satisfied or device is wiped if separated.
  */
 
+import { Device } from '@capacitor/device';
+
 export interface UserAuthProfile {
   phoneNumber: string;
   technicianName: string;
@@ -19,6 +21,7 @@ export interface UserAuthProfile {
   loginTimestamp: number;
   role?: string;
   githubVerified?: boolean;
+  registeredDeviceId?: string;
 }
 
 export interface CompanyEmployee {
@@ -29,6 +32,7 @@ export interface CompanyEmployee {
   department: string;
   status: 'ACTIVE' | 'RESIGNED' | 'REVOKED';
   fieldPasscode?: string;
+  registeredDeviceId?: string;
 }
 
 export interface AppOtaUpdateInfo {
@@ -55,38 +59,120 @@ export interface CompanyRevocationPolicy {
 // Built-in verified corporate directory (Synchronized with GitHub repository)
 export const DEFAULT_OFFICIAL_EMPLOYEES: CompanyEmployee[] = [
   {
-    employeeId: 'TECH-KRL-8092',
-    name: 'Sonu',
+    employeeId: 'EMP001',
+    name: 'Sonu S Pushpan',
     role: 'Senior Field Telecom Engineer',
     phone: '+91 98470 12345',
     department: 'Optical Transmission & FAT Maintenance',
     status: 'ACTIVE',
     fieldPasscode: '1234'
+  },
+  {
+    employeeId: 'EMP002',
+    name: 'Field Engineer 02',
+    role: 'Field Telecom Engineer',
+    phone: '+91 98470 12346',
+    department: 'Field Operations',
+    status: 'ACTIVE',
+    fieldPasscode: '1234'
+  },
+  {
+    employeeId: 'EMP003',
+    name: 'Field Engineer 03',
+    role: 'Field Telecom Engineer',
+    phone: '+91 98470 12347',
+    department: 'Field Operations',
+    status: 'ACTIVE',
+    fieldPasscode: '1234'
+  },
+  {
+    employeeId: 'EMP004',
+    name: 'Field Engineer 04',
+    role: 'Field Telecom Engineer',
+    phone: '+91 98470 12348',
+    department: 'Field Operations',
+    status: 'ACTIVE',
+    fieldPasscode: '1234'
+  },
+  {
+    employeeId: 'EMP005',
+    name: 'Field Engineer 05',
+    role: 'Field Telecom Engineer',
+    phone: '+91 98470 12349',
+    department: 'Field Operations',
+    status: 'ACTIVE',
+    fieldPasscode: '1234'
+  },
+  {
+    employeeId: 'EMP006',
+    name: 'Field Engineer 06',
+    role: 'Field Telecom Engineer',
+    phone: '+91 98470 12350',
+    department: 'Field Operations',
+    status: 'ACTIVE',
+    fieldPasscode: '1234'
+  },
+  {
+    employeeId: 'EMP007',
+    name: 'Field Engineer 07',
+    role: 'Field Telecom Engineer',
+    phone: '+91 98470 12351',
+    department: 'Field Operations',
+    status: 'ACTIVE',
+    fieldPasscode: '1234'
+  },
+  {
+    employeeId: 'EMP008',
+    name: 'Field Engineer 08',
+    role: 'Field Telecom Engineer',
+    phone: '+91 98470 12352',
+    department: 'Field Operations',
+    status: 'ACTIVE',
+    fieldPasscode: '1234'
+  },
+  {
+    employeeId: 'EMP009',
+    name: 'Field Engineer 09',
+    role: 'Field Telecom Engineer',
+    phone: '+91 98470 12353',
+    department: 'Field Operations',
+    status: 'ACTIVE',
+    fieldPasscode: '1234'
+  },
+  {
+    employeeId: 'EMP010',
+    name: 'Field Engineer 10',
+    role: 'Field Telecom Engineer',
+    phone: '+91 98470 12354',
+    department: 'Field Operations',
+    status: 'ACTIVE',
+    fieldPasscode: '1234'
   }
 ];
 
-// Current installed app version (Up-to-date Official Release)
+// Current installed app version (LocFinder Pro Official Release)
 export const CURRENT_APP_VERSION = {
-  version: '2.5.2',
-  build: 'Build 144 (Telecom Field Official OS)'
+  version: '3.2.0',
+  build: 'Build 320 (LocFinder Pro v3.2.0)'
 };
 
 // Default corporate policy template pointing to company GitHub repository
 const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
-  version: '2026.10.08',
+  version: '3.2.0',
   lastUpdated: new Date().toISOString(),
   globalWipeRevision: 1,
-  revokedTechnicianIds: ['FE-RESIGNED-991', 'FE-9999', 'EMP-EX-404', 'FE-RESIGNED-TEST'],
-  revokedPhoneNumbers: ['+91 99999 00000', '+91 98000 00000'],
+  revokedTechnicianIds: [],
+  revokedPhoneNumbers: [],
   revocationReason: 'Employee separation / resignation registered in Company GitHub security manifest',
-  githubRepoSource: 'https://raw.githubusercontent.com/telecom-field-ops/security-manifest/main/employees.json',
+  githubRepoSource: 'https://raw.githubusercontent.com/sonusp93/fiber-operations/main/active_employees.json',
   activeEmployees: DEFAULT_OFFICIAL_EMPLOYEES,
   latestAppUpdate: {
-    version: '2.5.2',
-    build: 'Build 144 (Official Release)',
-    releaseNotes: 'Official Production Build: Complete 120 FPS performance engine, indexed memory maps, and RTK GPS sync.',
-    isMandatory: false,
-    publishedAt: new Date().toISOString()
+    version: '3.2.0',
+    build: 'Build 320 (Official GitHub Release)',
+    releaseNotes: 'Official Release v3.2.0: Instant public GitHub policy fetch with cache-busting timestamp, in-app mandatory firmware updates, clean settings page, and accurate multi-field search.',
+    isMandatory: true,
+    publishedAt: new Date().toISOString(),
+    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v3.2.0/LocFinderPro.apk'
   }
 };
 
@@ -110,7 +196,12 @@ export class CompanySecurityService {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.POLICY);
       if (stored) {
-        return JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        if (parsed.githubRepoSource && parsed.githubRepoSource.includes('telecom-field-ops')) {
+          localStorage.removeItem(STORAGE_KEYS.POLICY);
+          return DEFAULT_COMPANY_POLICY;
+        }
+        return parsed;
       }
     } catch {
       // Fallback
@@ -136,7 +227,9 @@ export class CompanySecurityService {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.EMPLOYEES);
       if (stored) {
-        return JSON.parse(stored);
+        const parsed: CompanyEmployee[] = JSON.parse(stored);
+        const filtered = parsed.filter(e => e.employeeId === 'EMP001' || e.status === 'ACTIVE');
+        if (filtered.length > 0) return filtered;
       }
     } catch {
       // Fallback
@@ -173,15 +266,9 @@ export class CompanySecurityService {
   }
 
   /**
-   * Get current installed app version
+   * Get current installed app version (Returns the version of compiled binary executing right now)
    */
   static getCurrentInstalledVersion(): { version: string; build: string } {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEYS.INSTALLED_VERSION);
-      if (stored) {
-        return JSON.parse(stored);
-      }
-    } catch {}
     return CURRENT_APP_VERSION;
   }
 
@@ -247,24 +334,25 @@ export class CompanySecurityService {
   }
 
   /**
-   * Check if there is an OTA app update available
+   * Check if there is an OTA app update available (ALWAYS syncs live with GitHub first)
    */
   static async checkForOtaUpdate(): Promise<{
     hasUpdate: boolean;
     update?: AppOtaUpdateInfo;
     isMandatory: boolean;
   }> {
-    const policy = this.getLocalPolicy();
+    const syncRes = await this.syncWithGitHubPolicy();
+    const policy = syncRes.policy || this.getLocalPolicy();
     const current = this.getCurrentInstalledVersion();
 
     if (policy.latestAppUpdate) {
       const latest = policy.latestAppUpdate;
-      // If version is newer than installed
-      if (latest.version !== current.version) {
+      // If version on GitHub is different from currently running binary
+      if (latest.version && latest.version !== current.version) {
         return {
           hasUpdate: true,
           update: latest,
-          isMandatory: !!latest.isMandatory
+          isMandatory: true
         };
       }
     }
@@ -273,6 +361,21 @@ export class CompanySecurityService {
       hasUpdate: false,
       isMandatory: false
     };
+  }
+
+  /**
+   * Safely retrieves GitHub Personal Access Token or OAuth Token
+   */
+  static getGithubToken(): string {
+    try {
+      return (
+        (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_GITHUB_TOKEN) ||
+        localStorage.getItem('locfinder_github_token') ||
+        ''
+      );
+    } catch {
+      return localStorage.getItem('locfinder_github_token') || '';
+    }
   }
 
   /**
@@ -288,18 +391,42 @@ export class CompanySecurityService {
     hasNewUpdate: boolean;
     updateInfo?: AppOtaUpdateInfo;
   }> {
-    const url = this.getGitHubManifestUrl();
+    const token = this.getGithubToken();
     this.recordHeartbeat();
 
     try {
-      const response = await fetch(url, {
-        headers: { 'Accept': 'application/json' },
-        cache: 'no-store'
-      });
+      let data: any = null;
 
-      if (response.ok) {
-        const data = await response.json();
-        
+      // 1. Fetch public raw GitHub file with cache-busting timestamp (works 100% without token!)
+      try {
+        const rawRes = await fetch(`https://raw.githubusercontent.com/sonusp93/fiber-operations/main/active_employees.json?t=${Date.now()}`, {
+          cache: 'no-store'
+        });
+        if (rawRes.ok) {
+          data = await rawRes.json();
+        }
+      } catch {}
+
+      // 2. If raw fetch failed and token is available, try authenticated GitHub API
+      if (!data && token && token.trim().length > 0) {
+        try {
+          const repoPath = 'https://api.github.com/repos/sonusp93/fiber-operations/contents/active_employees.json';
+          const ghRes = await fetch(repoPath, {
+            headers: {
+              'Authorization': `token ${token.trim()}`,
+              'Accept': 'application/vnd.github.v3+json'
+            },
+            cache: 'no-store'
+          });
+          if (ghRes.ok) {
+            const fileData = await ghRes.json();
+            const contentStr = atob(fileData.content);
+            data = JSON.parse(contentStr);
+          }
+        } catch {}
+      }
+
+      if (data) {
         // Extract revoked IDs from GitHub file
         const revokedIds: string[] = Array.isArray(data.revokedTechnicianIds) 
           ? data.revokedTechnicianIds 
@@ -318,16 +445,44 @@ export class CompanySecurityService {
           this.saveEmployees(employees);
         }
 
-        const updateObj: AppOtaUpdateInfo = data.latestAppUpdate || DEFAULT_COMPANY_POLICY.latestAppUpdate!;
+        let updateObj: AppOtaUpdateInfo = data.latestAppUpdate || DEFAULT_COMPANY_POLICY.latestAppUpdate!;
+
+        // Also check live GitHub Releases API
+        try {
+          const reqHeaders: Record<string, string> = { 'Accept': 'application/vnd.github.v3+json' };
+          if (token && token.trim().length > 0) {
+            reqHeaders['Authorization'] = `token ${token.trim()}`;
+          }
+          const relRes = await fetch(`https://api.github.com/repos/sonusp93/fiber-operations/releases/latest?t=${Date.now()}`, {
+            headers: reqHeaders,
+            cache: 'no-store'
+          });
+          if (relRes.ok) {
+            const ghData = await relRes.json();
+            const tagVer = (ghData.tag_name || '').replace(/^v/, '');
+            if (tagVer) {
+              updateObj = {
+                version: tagVer,
+                build: ghData.name || `LocFinder Pro v${tagVer}`,
+                releaseNotes: ghData.body || 'Official new release published on GitHub.',
+                isMandatory: true,
+                publishedAt: ghData.published_at || new Date().toISOString(),
+                downloadUrl: `https://github.com/sonusp93/fiber-operations/releases/download/${ghData.tag_name}/LocFinderPro.apk`
+              };
+            }
+          }
+        } catch {
+          // Fallback to manifest updateObj
+        }
 
         const mergedPolicy: CompanyRevocationPolicy = {
-          version: data.version || '2026.10-github-live',
+          version: data.version || '1.0.0',
           lastUpdated: new Date().toISOString(),
           globalWipeRevision: data.globalWipeRevision || 1,
           revokedTechnicianIds: revokedIds,
           revokedPhoneNumbers: revokedPhones,
           revocationReason: data.revocationReason || 'Resigned Employee Deauthorization via GitHub Manifest',
-          githubRepoSource: url,
+          githubRepoSource: 'https://raw.githubusercontent.com/sonusp93/fiber-operations/main/active_employees.json',
           activeEmployees: employees,
           latestAppUpdate: updateObj
         };
@@ -427,18 +582,139 @@ export class CompanySecurityService {
   }
 
   /**
-   * Verify an employee without OTP: checks against official GitHub roster
+   * Retrieves unique hardware device UUID
    */
-  static verifyEmployee(identifier: string, passcode?: string): {
+  static async getDeviceHardwareId(): Promise<string> {
+    try {
+      const idObj = await Device.getId();
+      if (idObj && idObj.identifier) {
+        return `DEV-${idObj.identifier.toUpperCase().slice(-10)}`;
+      }
+    } catch {
+      // Fallback
+    }
+
+    let savedUuid = localStorage.getItem('locfinder_hardware_device_uuid');
+    if (!savedUuid) {
+      savedUuid = `DEV-${Math.random().toString(36).substring(2, 8).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
+      localStorage.setItem('locfinder_hardware_device_uuid', savedUuid);
+    }
+    return savedUuid;
+  }
+
+  /**
+   * Registers and commits 1-device hardware lock to GitHub active_employees.json
+   */
+  static async registerDeviceHardwareLockOnGithub(employeeId: string, deviceId: string, forceUpdate = false): Promise<boolean> {
+    try {
+      const token = this.getGithubToken();
+      if (!token) {
+        console.warn('GitHub token not set. Storing device lock locally.');
+        return false;
+      }
+      const repoPath = 'https://api.github.com/repos/sonusp93/fiber-operations/contents/active_employees.json';
+
+      const getRes = await fetch(repoPath, {
+        headers: {
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+
+      if (getRes.ok) {
+        const fileData = await getRes.json();
+        const contentStr = atob(fileData.content);
+        const jsonObj = JSON.parse(contentStr);
+
+        let modified = false;
+        if (Array.isArray(jsonObj.employees)) {
+          const emp = jsonObj.employees.find((e: any) => e.employeeId.toUpperCase() === employeeId.toUpperCase());
+          if (emp && (!emp.registeredDeviceId || emp.registeredDeviceId === '' || forceUpdate)) {
+            emp.registeredDeviceId = deviceId;
+            modified = true;
+          }
+        }
+
+        if (modified) {
+          const updatedContent = btoa(JSON.stringify(jsonObj, null, 2));
+          await fetch(repoPath, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `token ${token}`,
+              'Accept': 'application/vnd.github.v3+json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              message: `Lock Employee ID ${employeeId} to device ${deviceId}`,
+              content: updatedContent,
+              sha: fileData.sha
+            })
+          });
+          return true;
+        }
+      }
+    } catch (e) {
+      console.error('Failed to register device lock on GitHub', e);
+    }
+    return false;
+  }
+
+  /**
+   * Verify an employee: checks against official GitHub roster and enforces 1-Device Hardware Binding Lock
+   */
+  static async verifyEmployee(
+    identifier: string,
+    passcode?: string,
+    deviceId?: string,
+    forceDeviceRelock = false
+  ): Promise<{
     success: boolean;
     employee?: CompanyEmployee;
     isRevoked?: boolean;
+    isDeviceMismatch?: boolean;
     error?: string;
-  } {
+  }> {
     const cleanId = identifier.trim().toLowerCase();
     const cleanDigits = identifier.replace(/\D/g, '');
     const policy = this.getLocalPolicy();
-    const employees = this.getOfficialEmployees();
+    let employees = this.getOfficialEmployees();
+
+    if (!cleanId) {
+      return {
+        success: false,
+        error: 'Please enter your Employee ID or Name.'
+      };
+    }
+
+    // 0. LIVE GITHUB ROSTER & DEVICE LOCK FETCH BEFORE VERIFICATION
+    try {
+      const token = this.getGithubToken();
+      const repoPath = 'https://api.github.com/repos/sonusp93/fiber-operations/contents/active_employees.json';
+      const headers: Record<string, string> = { 'Accept': 'application/vnd.github.v3+json' };
+      if (token) headers['Authorization'] = `token ${token}`;
+
+      let getRes = await fetch(repoPath, { headers, cache: 'no-store' });
+      if (!getRes.ok) {
+        getRes = await fetch('https://raw.githubusercontent.com/sonusp93/fiber-operations/main/active_employees.json', { cache: 'no-store' });
+      }
+
+      if (getRes.ok) {
+        const fileText = await getRes.text();
+        let jsonObj: any;
+        try {
+          const raw = JSON.parse(fileText);
+          jsonObj = raw.content ? JSON.parse(atob(raw.content)) : raw;
+        } catch {
+          jsonObj = JSON.parse(fileText);
+        }
+        if (jsonObj && Array.isArray(jsonObj.employees)) {
+          employees = jsonObj.employees;
+          this.saveEmployees(employees);
+        }
+      }
+    } catch {
+      // Fallback to cached employees
+    }
 
     // 1. Check if ID or phone is listed as REVOKED / RESIGNED in GitHub policy
     const isIdRevoked = policy.revokedTechnicianIds.some(
@@ -452,11 +728,11 @@ export class CompanySecurityService {
       return {
         success: false,
         isRevoked: true,
-        error: 'ACCESS DENIED: Official company records indicate this employee has resigned. Corporate data wipe triggered.'
+        error: 'ACCESS DENIED: Official company records indicate this employee has resigned/revoked.'
       };
     }
 
-    // 2. Find matching employee in official roster
+    // 2. STRICT MATCHING: Employee MUST exist in active_employees.json roster
     const match = employees.find((emp) => {
       const matchId = emp.employeeId.toLowerCase() === cleanId;
       const matchName = emp.name.toLowerCase() === cleanId;
@@ -464,52 +740,68 @@ export class CompanySecurityService {
       return matchId || matchName || matchPhone;
     });
 
-    if (match) {
-      if (match.status === 'RESIGNED' || match.status === 'REVOKED') {
-        return {
-          success: false,
-          isRevoked: true,
-          error: 'ACCESS DENIED: Resigned employee. Access has been permanently deauthorized by company administration.'
-        };
-      }
-
-      // Check passcode if provided
-      if (passcode && match.fieldPasscode && passcode.trim() !== match.fieldPasscode && passcode.trim() !== '1234') {
-        return {
-          success: false,
-          error: 'Invalid Field Security Passcode. Default field code is 1234.'
-        };
-      }
-
+    if (!match) {
       return {
-        success: true,
-        employee: match
+        success: false,
+        error: `ACCESS DENIED: Employee ID '${identifier.trim()}' is not listed in active_employees.json. Only authorized company employees are permitted.`
       };
     }
 
-    // If identifier is not in predefined list but looks like valid field format, allow if passcode is 1234
-    if (cleanId.length >= 3) {
-      const customEmp: CompanyEmployee = {
-        employeeId: cleanId.toUpperCase().startsWith('TECH') || cleanId.toUpperCase().startsWith('EMP') 
-          ? cleanId.toUpperCase() 
-          : `TECH-${cleanId.toUpperCase()}`,
-        name: identifier.trim(),
-        role: 'Field Telecom Engineer',
-        phone: cleanDigits.length >= 10 ? `+91 ${cleanDigits.slice(-10)}` : '+91 98470 12345',
-        department: 'Field Operations',
-        status: 'ACTIVE',
-        fieldPasscode: '1234'
-      };
-
+    if (match.status === 'RESIGNED' || match.status === 'REVOKED') {
       return {
-        success: true,
-        employee: customEmp
+        success: false,
+        isRevoked: true,
+        error: 'ACCESS DENIED: Resigned employee access has been deauthorized.'
       };
+    }
+
+    // 3. Strict Passcode Verification (default '1234')
+    const requiredPasscode = match.fieldPasscode || '1234';
+    if (!passcode || passcode.trim() !== requiredPasscode) {
+      return {
+        success: false,
+        error: 'Invalid Passcode. Please enter the correct field passcode.'
+      };
+    }
+
+    // 4. STRICT 1-DEVICE HARDWARE BINDING LOCK (GITHUB SYNCED)
+    const currentHardwareId = deviceId || await this.getDeviceHardwareId();
+    const deviceLockKey = `locfinder_device_lock_${match.employeeId.toUpperCase()}`;
+    const registeredLock = match.registeredDeviceId || localStorage.getItem(deviceLockKey);
+
+    if (registeredLock && registeredLock !== '' && registeredLock !== currentHardwareId && !forceDeviceRelock) {
+      return {
+        success: false,
+        isDeviceMismatch: true,
+        error: `ACCESS DENIED: Employee ID (${match.employeeId}) is registered on another device (${registeredLock}). If you uninstalled and reinstalled the app on this device, click "Reset & Re-bind Device" below to activate.`
+      };
+    }
+
+    // 5. BI-DIRECTIONAL LOCK: Check if THIS PHONE is already locked to another Employee ID
+    const phoneBoundEmpKey = 'locfinder_phone_bound_employee_id';
+    const boundEmpIdOnThisPhone = localStorage.getItem(phoneBoundEmpKey);
+
+    if (boundEmpIdOnThisPhone && boundEmpIdOnThisPhone.toUpperCase() !== match.employeeId.toUpperCase() && !forceDeviceRelock) {
+      return {
+        success: false,
+        isDeviceMismatch: true,
+        error: `ACCESS DENIED: This phone is bound to Employee ID ${boundEmpIdOnThisPhone}. If you uninstalled and reinstalled the app, click "Reset & Re-bind Device" below.`
+      };
+    }
+
+    // Bind this phone to this specific Employee ID
+    localStorage.setItem(phoneBoundEmpKey, match.employeeId.toUpperCase());
+
+    // Lock Employee ID to this phone on first login or force re-bind
+    if (!registeredLock || registeredLock === '' || forceDeviceRelock || registeredLock !== currentHardwareId) {
+      match.registeredDeviceId = currentHardwareId;
+      localStorage.setItem(deviceLockKey, currentHardwareId);
+      await this.registerDeviceHardwareLockOnGithub(match.employeeId, currentHardwareId, true);
     }
 
     return {
-      success: false,
-      error: 'Please enter a valid Employee ID, Engineer Name, or Registered Mobile Number.'
+      success: true,
+      employee: match
     };
   }
 

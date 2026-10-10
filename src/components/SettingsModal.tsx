@@ -120,21 +120,21 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     setAvailableUpdate(null);
     setUpdateInstallSuccess(null);
     try {
-      const syncRes = await CompanySecurityService.syncWithGitHubPolicy();
-      const latest = syncRes.policy.latestAppUpdate || CompanySecurityService.getLocalPolicy().latestAppUpdate;
+      const otaRes = await CompanySecurityService.checkForOtaUpdate();
+      const currentVer = CompanySecurityService.getCurrentInstalledVersion().version;
 
-      if (latest && latest.version !== CompanySecurityService.getCurrentInstalledVersion().version) {
+      if (otaRes.hasUpdate && otaRes.update) {
         setAvailableUpdate({
-          version: `v${latest.version}`,
-          build: latest.build || `Build ${latest.version}`,
-          releaseNotes: latest.releaseNotes || 'New in-app mandatory update available.'
+          version: `v${otaRes.update.version}`,
+          build: otaRes.update.build || `Build ${otaRes.update.version}`,
+          releaseNotes: otaRes.update.releaseNotes || 'New in-app mandatory update available.'
         });
         if (onTriggerOtaUpdate) {
-          onTriggerOtaUpdate(latest);
+          onTriggerOtaUpdate(otaRes.update);
           onClose();
         }
       } else {
-        setUpdateInstallSuccess(`App is up to date! Currently running v${CompanySecurityService.getCurrentInstalledVersion().version} (${CompanySecurityService.getCurrentInstalledVersion().build}).`);
+        setUpdateInstallSuccess(`App is up to date! Currently running v${currentVer}.`);
       }
     } catch {
       setUpdateInstallSuccess(`App is up to date! Currently running v${CompanySecurityService.getCurrentInstalledVersion().version}.`);

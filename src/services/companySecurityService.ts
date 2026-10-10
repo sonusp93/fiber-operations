@@ -334,24 +334,25 @@ export class CompanySecurityService {
   }
 
   /**
-   * Check if there is an OTA app update available
+   * Check if there is an OTA app update available (ALWAYS syncs live with GitHub first)
    */
   static async checkForOtaUpdate(): Promise<{
     hasUpdate: boolean;
     update?: AppOtaUpdateInfo;
     isMandatory: boolean;
   }> {
-    const policy = this.getLocalPolicy();
+    const syncRes = await this.syncWithGitHubPolicy();
+    const policy = syncRes.policy || this.getLocalPolicy();
     const current = this.getCurrentInstalledVersion();
 
     if (policy.latestAppUpdate) {
       const latest = policy.latestAppUpdate;
-      // If version is newer than installed
-      if (latest.version !== current.version) {
+      // If version on GitHub is different from currently running binary
+      if (latest.version && latest.version !== current.version) {
         return {
           hasUpdate: true,
           update: latest,
-          isMandatory: !!latest.isMandatory
+          isMandatory: true
         };
       }
     }
