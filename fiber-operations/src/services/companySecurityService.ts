@@ -334,6 +334,34 @@ export class CompanySecurityService {
   }
 
   /**
+   * Helper to parse version string "3.4.0" into numeric rank for robust comparison
+   */
+  static parseVersionRank(versionStr: string): number {
+    try {
+      const clean = (versionStr || '').replace(/[^0-9.]/g, '');
+      const parts = clean.split('.').map((p) => parseInt(p, 10) || 0);
+      const major = parts[0] || 0;
+      const minor = parts[1] || 0;
+      const patch = parts[2] || 0;
+      return major * 10000 + minor * 100 + patch;
+    } catch {
+      return 0;
+    }
+  }
+
+  /**
+   * Checks if latest version string is newer than current version string
+   */
+  static isVersionNewer(currentVer: string, latestVer: string): boolean {
+    const currentRank = this.parseVersionRank(currentVer);
+    const latestRank = this.parseVersionRank(latestVer);
+    if (latestRank > 0 && currentRank > 0) {
+      return latestRank > currentRank;
+    }
+    return (latestVer || '').trim() !== (currentVer || '').trim();
+  }
+
+  /**
    * Check if there is an OTA app update available (ALWAYS syncs live with GitHub first)
    */
   static async checkForOtaUpdate(): Promise<{
@@ -345,10 +373,10 @@ export class CompanySecurityService {
     const policy = syncRes.policy || this.getLocalPolicy();
     const current = this.getCurrentInstalledVersion();
 
-    if (policy.latestAppUpdate) {
+    if (policy.latestAppUpdate && policy.latestAppUpdate.version) {
       const latest = policy.latestAppUpdate;
-      // If version on GitHub is different from currently running binary
-      if (latest.version && latest.version !== current.version) {
+      // Compare semver rank or string mismatch
+      if (this.isVersionNewer(current.version, latest.version)) {
         return {
           hasUpdate: true,
           update: latest,
