@@ -152,13 +152,13 @@ export const DEFAULT_OFFICIAL_EMPLOYEES: CompanyEmployee[] = [
 
 // Current installed app version (LocFinder Pro Official Release)
 export const CURRENT_APP_VERSION = {
-  version: '1.0.0',
-  build: 'Build 100 (LocFinder Pro Official OS)'
+  version: '3.1.1',
+  build: 'Build 311 (LocFinder Pro v3.1.1)'
 };
 
 // Default corporate policy template pointing to company GitHub repository
 const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
-  version: '1.0.3',
+  version: '3.1.1',
   lastUpdated: new Date().toISOString(),
   globalWipeRevision: 1,
   revokedTechnicianIds: [],
@@ -167,12 +167,12 @@ const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
   githubRepoSource: 'https://raw.githubusercontent.com/sonusp93/fiber-operations/main/active_employees.json',
   activeEmployees: DEFAULT_OFFICIAL_EMPLOYEES,
   latestAppUpdate: {
-    version: '1.0.3',
-    build: 'Build 103 (Official Major GitHub Release)',
-    releaseNotes: 'Official Release v1.0.3: Enforces strict bi-directional 1-device global hardware locking via GitHub API, 120 FPS paginated radar node discovery, specialized PON Trunk & Splitter telemetry, native back gesture handling, and battery-optimized GPS.',
+    version: '3.1.1',
+    build: 'Build 311 (Official GitHub Release)',
+    releaseNotes: 'Official Release v3.1.1: Self-service 1-device hardware lock reset upon reinstallation, GitHub secret protection, and stability improvements.',
     isMandatory: true,
     publishedAt: new Date().toISOString(),
-    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v1.0.3/LocFinderPro.apk'
+    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v3.1.1/LocFinderPro.apk'
   }
 };
 

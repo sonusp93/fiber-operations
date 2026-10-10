@@ -1,5 +1,5 @@
 {
-  "version": "3.1.0",
+  "version": "3.1.1",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -96,10 +96,10 @@
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "3.1.0",
-    "build": "Build 310 (LocFinder Pro v3.1.0)",
-    "releaseNotes": "Official Live Production Release v3.1.0: Real-time public GitHub OTA engine, native background download manager, automatic package installer launch, bi-directional 1-device 1-user hardware lock, and fluid search animations.",
+    "version": "3.1.1",
+    "build": "Build 311 (LocFinder Pro v3.1.1)",
+    "releaseNotes": "Official Live Production Release v3.1.1: Self-service 1-device hardware lock reset upon reinstallation, GitHub secret protection, and stability improvements.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.1.0/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.1.1/LocFinderPro.apk"
   }
 }
