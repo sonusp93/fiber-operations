@@ -1,5 +1,5 @@
 {
-  "version": "1.0.4",
+  "version": "1.0.5",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -97,10 +97,10 @@
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "1.0.4",
-    "build": "Build 104 (LocFinder Pro v1.0.4)",
-    "releaseNotes": "Official Release v1.0.4: Enforces strict bi-directional 1-device global hardware locking via GitHub API, 120 FPS paginated radar node discovery, specialized PON Trunk & Splitter telemetry, native back gesture handling, and battery-optimized GPS.",
+    "version": "1.0.5",
+    "build": "Build 105 (LocFinder Pro v1.0.5)",
+    "releaseNotes": "Official Release v1.0.5: Enforces strict bi-directional 1-device global hardware locking via GitHub API, 120 FPS paginated radar node discovery, specialized PON Trunk & Splitter telemetry, native back gesture handling, and battery-optimized GPS.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v1.0.4/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v1.0.5/LocFinderPro.apk"
   }
 }
