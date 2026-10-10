@@ -1,5 +1,5 @@
 {
-  "version": "3.1.2",
+  "version": "3.1.3",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -96,10 +96,10 @@
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "3.1.2",
-    "build": "Build 312 (LocFinder Pro v3.1.2)",
-    "releaseNotes": "Official Live Release v3.1.2: Fixed Sparkles icon render exception, self-service 1-device hardware relock, and performance optimizations.",
+    "version": "3.1.3",
+    "build": "Build 313 (LocFinder Pro v3.1.3)",
+    "releaseNotes": "Official Live Release v3.1.3: Purged Service Worker PWA cache, relative asset loading, and 100% crash-proof Sparkles fallback.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.1.2/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.1.3/LocFinderPro.apk"
   }
 }

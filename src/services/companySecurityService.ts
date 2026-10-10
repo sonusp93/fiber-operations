@@ -152,13 +152,13 @@ export const DEFAULT_OFFICIAL_EMPLOYEES: CompanyEmployee[] = [
 
 // Current installed app version (LocFinder Pro Official Release)
 export const CURRENT_APP_VERSION = {
-  version: '3.1.2',
-  build: 'Build 312 (LocFinder Pro v3.1.2)'
+  version: '3.1.3',
+  build: 'Build 313 (LocFinder Pro v3.1.3)'
 };
 
 // Default corporate policy template pointing to company GitHub repository
 const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
-  version: '3.1.2',
+  version: '3.1.3',
   lastUpdated: new Date().toISOString(),
   globalWipeRevision: 1,
   revokedTechnicianIds: [],
@@ -167,12 +167,12 @@ const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
   githubRepoSource: 'https://raw.githubusercontent.com/sonusp93/fiber-operations/main/active_employees.json',
   activeEmployees: DEFAULT_OFFICIAL_EMPLOYEES,
   latestAppUpdate: {
-    version: '3.1.2',
-    build: 'Build 312 (Official GitHub Release)',
-    releaseNotes: 'Official Release v3.1.2: Fixed Sparkles icon render exception, self-service 1-device hardware relock, and performance optimizations.',
+    version: '3.1.3',
+    build: 'Build 313 (Official GitHub Release)',
+    releaseNotes: 'Official Release v3.1.3: Purged Service Worker PWA cache, relative asset loading, and 100% crash-proof Sparkles fallback.',
     isMandatory: true,
     publishedAt: new Date().toISOString(),
-    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v3.1.2/LocFinderPro.apk'
+    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v3.1.3/LocFinderPro.apk'
   }
 };
 
