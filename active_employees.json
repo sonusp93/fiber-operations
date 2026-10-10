@@ -1,5 +1,5 @@
 {
-  "version": "3.2.0",
+  "version": "3.2.1",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -96,10 +96,10 @@
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "3.2.0",
-    "build": "Build 320 (LocFinder Pro v3.2.0)",
-    "releaseNotes": "Official Live Major Release v3.2.0: Instant public GitHub policy fetch with cache-busting timestamp, in-app mandatory firmware updates, clean settings page, and accurate multi-field search.",
+    "version": "3.2.1",
+    "build": "Build 321 (LocFinder Pro v3.2.1)",
+    "releaseNotes": "Official Live Release v3.2.1: Removed in-page dashboard search bar, added category-specific search for FAT, HUB, RSU, and PON Port in correct sort order.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.2.0/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.2.1/LocFinderPro.apk"
   }
 }

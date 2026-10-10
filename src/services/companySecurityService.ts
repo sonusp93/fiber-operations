@@ -152,13 +152,13 @@ export const DEFAULT_OFFICIAL_EMPLOYEES: CompanyEmployee[] = [
 
 // Current installed app version (LocFinder Pro Official Release)
 export const CURRENT_APP_VERSION = {
-  version: '3.2.0',
-  build: 'Build 320 (LocFinder Pro v3.2.0)'
+  version: '3.2.1',
+  build: 'Build 321 (LocFinder Pro v3.2.1)'
 };
 
 // Default corporate policy template pointing to company GitHub repository
 const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
-  version: '3.2.0',
+  version: '3.2.1',
   lastUpdated: new Date().toISOString(),
   globalWipeRevision: 1,
   revokedTechnicianIds: [],
@@ -167,12 +167,12 @@ const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
   githubRepoSource: 'https://raw.githubusercontent.com/sonusp93/fiber-operations/main/active_employees.json',
   activeEmployees: DEFAULT_OFFICIAL_EMPLOYEES,
   latestAppUpdate: {
-    version: '3.2.0',
-    build: 'Build 320 (Official GitHub Release)',
-    releaseNotes: 'Official Release v3.2.0: Instant public GitHub policy fetch with cache-busting timestamp, in-app mandatory firmware updates, clean settings page, and accurate multi-field search.',
+    version: '3.2.1',
+    build: 'Build 321 (Official GitHub Release)',
+    releaseNotes: 'Official Release v3.2.1: Removed in-page dashboard search bar, added category-specific search for FAT, HUB, RSU, and PON Port in correct sort order.',
     isMandatory: true,
     publishedAt: new Date().toISOString(),
-    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v3.2.0/LocFinderPro.apk'
+    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v3.2.1/LocFinderPro.apk'
   }
 };
 

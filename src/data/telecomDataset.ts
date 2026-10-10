@@ -83,6 +83,17 @@ export interface RsuRecord {
   hubsList: HubRecord[];
 }
 
+export interface PonRecord {
+  ponPort: string;
+  affiliatedPon: string;
+  hub: string;
+  rsu: string;
+  city: string;
+  fatCount: number;
+  totalCapacity: number;
+  fats: FatRecord[];
+}
+
 // Master state holding loaded records
 let RAW_TUPLE_DATASET: RawFatTuple[] = [];
 export let FAT_DATASET: FatRecord[] = [];
@@ -91,6 +102,31 @@ export let RSU_DATASET: RsuRecord[] = [];
 export let FAT_BY_CITY_MAP: Map<string, FatRecord[]> = new Map();
 export let FAT_BY_HUB_MAP: Map<string, FatRecord[]> = new Map();
 export let FAT_BY_RSU_MAP: Map<string, FatRecord[]> = new Map();
+
+export function getPonDataset(): PonRecord[] {
+  const ponMap = new Map<string, PonRecord>();
+  for (const fat of FAT_DATASET) {
+    const key = fat.ponPort || 'PON-UNKNOWN';
+    const existing = ponMap.get(key);
+    if (!existing) {
+      ponMap.set(key, {
+        ponPort: fat.ponPort,
+        affiliatedPon: fat.affiliatedPon,
+        hub: fat.hub,
+        rsu: fat.rsu,
+        city: fat.city,
+        fatCount: 1,
+        totalCapacity: fat.totalCap,
+        fats: [fat]
+      });
+    } else {
+      existing.fatCount += 1;
+      existing.totalCapacity += fat.totalCap;
+      existing.fats.push(fat);
+    }
+  }
+  return Array.from(ponMap.values()).sort((a, b) => a.ponPort.localeCompare(b.ponPort));
+}
 
 let isDataLoaded = false;
 let loadPromise: Promise<boolean> | null = null;
