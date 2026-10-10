@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "2.1.0",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -8,7 +8,8 @@
       "phone": "+91 98470 12345",
       "department": "Optical Transmission & FAT Maintenance",
       "status": "ACTIVE",
-      "fieldPasscode": "1234"
+      "fieldPasscode": "1234",
+      "registeredDeviceId": "DEV-B30A616B38"
     },
     {
       "employeeId": "EMP002",
@@ -17,7 +18,8 @@
       "phone": "+91 98470 12346",
       "department": "Field Operations",
       "status": "ACTIVE",
-      "fieldPasscode": "1234"
+      "fieldPasscode": "1234",
+      "registeredDeviceId": "DEV-73EB53263C"
     },
     {
       "employeeId": "EMP003",
@@ -94,10 +96,10 @@
   ],
   "revokedTechnicianIds": ["TECH-KRL-8092"],
   "latestAppUpdate": {
-    "version": "2.0.0",
-    "build": "Build 200 (LocFinder Pro v2.0.0)",
-    "releaseNotes": "Major Live OTA Release v2.0.0: Bulletproof public raw GitHub synchronization, native background download manager, package installer, all employee accounts EMP001-EMP010 completely cleared and free to auto-bind on first login.",
+    "version": "2.1.0",
+    "build": "Build 210 (LocFinder Pro v2.1.0)",
+    "releaseNotes": "Official Live OTA Release v2.1.0: Real-time GitHub sync without auth token headers, EMP001 locked to Device 1, EMP002 locked to Device 2, EMP003-EMP010 auto-assigning on first login, and in-app native background download installer.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v2.0.0/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v2.1.0/LocFinderPro.apk"
   }
 }
