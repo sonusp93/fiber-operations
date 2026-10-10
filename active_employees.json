@@ -8,7 +8,7 @@
       "phone": "+91 98470 12345",
       "department": "Optical Transmission & FAT Maintenance",
       "status": "ACTIVE",
-      "fieldPasscode": "1234",
+      "fieldPasscode": "1234"
     },
     {
       "employeeId": "EMP002",
@@ -17,7 +17,7 @@
       "phone": "+91 98470 12346",
       "department": "Field Operations",
       "status": "ACTIVE",
-      "fieldPasscode": "1234",
+      "fieldPasscode": "1234"
     },
     {
       "employeeId": "EMP003",
@@ -96,7 +96,7 @@
   "latestAppUpdate": {
     "version": "2.0.0",
     "build": "Build 200 (LocFinder Pro v2.0.0)",
-    "releaseNotes": "Major Live OTA Release v2.0.0: Bulletproof public raw GitHub synchronization, native background download manager, package installer, 1-device 1-user hardware lock for EMP001 and EMP002, free unassigned IDs EMP003-EMP010, and instant OTA notification.",
+    "releaseNotes": "Major Live OTA Release v2.0.0: Bulletproof public raw GitHub synchronization, native background download manager, package installer, all employee accounts EMP001-EMP010 completely cleared and free to auto-bind on first login.",
     "isMandatory": true,
     "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v2.0.0/LocFinderPro.apk"
   }
