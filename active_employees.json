@@ -18,7 +18,8 @@
       "phone": "+91 98470 12346",
       "department": "Field Operations",
       "status": "ACTIVE",
-      "fieldPasscode": "1234"
+      "fieldPasscode": "1234",
+      "registeredDeviceId": "DEV-B30A616B38"
     },
     {
       "employeeId": "EMP003",
