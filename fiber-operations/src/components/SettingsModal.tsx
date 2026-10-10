@@ -7,9 +7,7 @@ import {
   Check, 
   Sparkles as LucideSparkles,
   ShieldCheck, 
-  Image as ImageIcon, 
-  Upload, 
-  Video, 
+  Video,
   Play, 
   Film, 
   User, 
@@ -22,7 +20,6 @@ import {
   Compass,
   Palette,
   Lock,
-  Smartphone,
   Info,
   CheckCircle
 } from 'lucide-react';
@@ -112,6 +109,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     version: string;
     build: string;
     releaseNotes: string;
+    downloadUrl?: string;
   } | null>(null);
   const [updateInstallSuccess, setUpdateInstallSuccess] = useState<string | null>(null);
 
@@ -127,11 +125,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         setAvailableUpdate({
           version: `v${otaRes.update.version}`,
           build: otaRes.update.build || `Build ${otaRes.update.version}`,
-          releaseNotes: otaRes.update.releaseNotes || 'New in-app mandatory update available.'
+          releaseNotes: otaRes.update.releaseNotes || 'New in-app mandatory update available.',
+          downloadUrl: otaRes.update.downloadUrl
         });
         if (onTriggerOtaUpdate) {
           onTriggerOtaUpdate(otaRes.update);
-          onClose();
         }
       } else {
         setUpdateInstallSuccess(`App is up to date! Currently running v${currentVer}.`);
@@ -150,7 +148,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         build: availableUpdate.build,
         releaseNotes: availableUpdate.releaseNotes,
         isMandatory: true,
-        downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v3.1.5/LocFinderPro.apk'
+        downloadUrl: availableUpdate.downloadUrl || 'https://github.com/sonusp93/fiber-operations/releases/download/v3.6.0/LocFinderPro.apk'
       });
       onClose();
     }
@@ -168,20 +166,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       setGitHubSyncResult(res.message);
     } finally {
       setIsSyncingGitHub(false);
-    }
-  };
-
-  const handleCustomWallpaperUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (uploadEvent) => {
-        const result = uploadEvent.target?.result as string;
-        if (result) {
-          onWallpaperChange(result);
-        }
-      };
-      reader.readAsDataURL(file);
     }
   };
 
@@ -215,30 +199,32 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     { id: 'light_pure_pearl', name: 'Pure Minimal Pearl', accent: '#475569', preview: 'bg-zinc-100 border-zinc-300' }
   ];
 
+  const currentVersion = CompanySecurityService.getCurrentInstalledVersion().version;
+
   return (
     <div className={`fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200 select-none ${
-      isLightMode ? 'bg-slate-900/50' : 'bg-black/85'
+      isLightMode ? 'bg-slate-950/60 backdrop-blur-md' : 'bg-black/85 backdrop-blur-2xl'
     }`}>
-      <div className={`w-full max-w-xl border rounded-t-3xl sm:rounded-3xl p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto flex flex-col transition-all duration-300 ${
+      <div className={`w-full max-w-xl border rounded-t-3xl sm:rounded-3xl p-4 sm:p-6 space-y-4 shadow-[0_25px_60px_rgba(0,0,0,0.95)] max-h-[92vh] overflow-y-auto flex flex-col transition-all duration-300 ${
         isLightMode
-          ? 'bg-white border-slate-200 text-slate-900 shadow-xl'
-          : 'bg-[#0d101a] border-white/10 text-neutral-100 shadow-[0_25px_60px_rgba(0,0,0,0.95)]'
+          ? 'bg-white border-slate-200 text-slate-900'
+          : 'bg-[#0a0d18] border-white/15 text-neutral-100'
       }`}>
-        {/* Header */}
-        <div className={`flex justify-between items-center pb-3 border-b ${
+        {/* Modern Cyan Glassmorphic Header */}
+        <div className={`flex justify-between items-center pb-3.5 border-b ${
           isLightMode ? 'border-slate-200' : 'border-white/10'
         }`}>
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white font-black shadow-lg shadow-cyan-500/25">
-              <Sparkles className="w-5 h-5" />
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-600 to-indigo-600 flex items-center justify-center text-white font-black shadow-lg shadow-cyan-500/30">
+              <Sparkles className="w-5.5 h-5.5 text-white" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-extrabold tracking-tight">
                   Field Engine Settings
                 </h2>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 font-bold border border-cyan-500/30">
-                  v{CompanySecurityService.getCurrentInstalledVersion().version}
+                <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 font-black border border-cyan-500/40 shadow-xs">
+                  v{currentVersion}
                 </span>
               </div>
               <span className={`text-[11px] font-mono ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>
@@ -252,7 +238,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             className={`p-2 rounded-full cursor-pointer active:scale-90 transition-all border ${
               isLightMode
                 ? 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-600'
-                : 'bg-white/10 hover:bg-white/20 border-white/10 text-neutral-300'
+                : 'bg-white/10 hover:bg-white/20 border-white/10 text-neutral-300 hover:text-white'
             }`}
             title="Close Settings"
           >
@@ -260,29 +246,29 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </button>
         </div>
 
-        {/* Scrollable Content Container */}
-        <div className="flex-1 space-y-3.5 overflow-y-auto py-1 pr-0.5">
+        {/* Scrollable Settings Cards Container */}
+        <div className="flex-1 space-y-4 overflow-y-auto py-1 no-scrollbar">
 
-          {/* 1. LOGGED-IN TECHNICIAN PROFILE & LOGOUT */}
-          <div className={`p-4 rounded-2xl border flex items-center justify-between ${
-            isLightMode ? 'bg-blue-50/80 border-blue-200' : 'bg-cyan-950/20 border-cyan-500/30'
+          {/* 1. VERIFIED TECHNICIAN PROFILE */}
+          <div className={`p-4 rounded-2xl border flex items-center justify-between shadow-md ${
+            isLightMode ? 'bg-blue-50/80 border-blue-200' : 'bg-gradient-to-r from-[#0d1627] to-[#080d19] border-cyan-500/30'
           }`}>
-            <div className="flex items-center gap-3">
-              <div className={`w-11 h-11 rounded-xl flex items-center justify-center border font-mono font-black ${
+            <div className="flex items-center gap-3 min-w-0">
+              <div className={`w-11 h-11 rounded-xl flex items-center justify-center border font-mono font-black shrink-0 ${
                 isLightMode ? 'bg-blue-600 text-white border-blue-500' : 'bg-cyan-500 text-slate-950 border-cyan-400 shadow-md shadow-cyan-500/30'
               }`}>
-                <User className="w-5 h-5" />
+                <User className="w-5.5 h-5.5" />
               </div>
-              <div>
+              <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <h4 className="text-xs font-black tracking-tight">
+                  <h4 className="text-xs font-black tracking-tight truncate">
                     {currentUser ? currentUser.technicianName : 'Active Technician'}
                   </h4>
-                  <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold">
+                  <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold shrink-0">
                     {currentUser ? 'Verified' : 'Guest'}
                   </span>
                 </div>
-                <p className={`text-[11px] font-mono mt-0.5 ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>
+                <p className={`text-[11px] font-mono mt-0.5 truncate ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>
                   {currentUser ? `${currentUser.phoneNumber} · ${currentUser.technicianId}` : 'EMP001 · Sonu S Pushpan'}
                 </p>
               </div>
@@ -295,7 +281,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   onLogout();
                   onClose();
                 }}
-                className="px-3.5 py-2 rounded-xl text-xs font-mono font-black flex items-center gap-1.5 bg-red-500 hover:bg-red-600 text-white cursor-pointer shadow-lg shadow-red-500/20 transition-all active:scale-95"
+                className="px-3.5 py-2 rounded-xl text-xs font-mono font-black flex items-center gap-1.5 bg-red-500 hover:bg-red-600 text-white cursor-pointer shadow-lg shadow-red-500/25 transition-all active:scale-95 shrink-0"
                 title="Logout from technician session"
               >
                 <LogOut className="w-3.5 h-3.5" />
@@ -304,82 +290,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             )}
           </div>
 
-          {/* 2. WHAT'S NEW IN VERSION 3.1.5 (FULL RELEASE CHANGELOG) */}
-          <div className={`p-4 rounded-2xl border space-y-3 ${
-            isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-white/[0.04] border-white/10'
+          {/* 2. MANDATORY IN-APP OTA ENGINE */}
+          <div className={`p-4 rounded-2xl border space-y-3.5 shadow-md ${
+            isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-[#111625] border-cyan-500/20'
           }`}>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
               <div>
                 <div className="flex items-center gap-2">
-                  <h4 className="text-xs font-black flex items-center gap-1.5">
-                    <Info className="w-4 h-4 text-cyan-400" />
-                    <span>What's New in Version {CompanySecurityService.getCurrentInstalledVersion().version}</span>
-                  </h4>
-                  <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 font-bold border border-cyan-500/30">
-                    Changelog
-                  </span>
-                </div>
-                <p className={`text-[11px] mt-0.5 ${isLightMode ? 'text-slate-500' : 'text-neutral-400'}`}>
-                  Feature comparison &amp; performance upgrades (Before vs After)
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-2 text-xs font-mono">
-              <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1.5">
-                <div className="text-emerald-400 font-bold text-[11px] flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5" />
-                  <span>1. In-App Mandatory OTA Updates (No Browser Navigation)</span>
-                </div>
-                <p className="text-[10.5px] text-slate-300">
-                  <span className="text-amber-400 font-bold">[BEFORE]:</span> Updates required opening external web browser.<br />
-                  <span className="text-emerald-400 font-bold">[AFTER]:</span> Mandatory updates patch directly inside the app with full live progress.
-                </p>
-              </div>
-
-              <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1.5">
-                <div className="text-emerald-400 font-bold text-[11px] flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5" />
-                  <span>2. Self-Service Reinstallation Device Lock Reset</span>
-                </div>
-                <p className="text-[10.5px] text-slate-300">
-                  <span className="text-amber-400 font-bold">[BEFORE]:</span> Uninstalling app blocked logins with device mismatch errors.<br />
-                  <span className="text-emerald-400 font-bold">[AFTER]:</span> Reinstalled app allows 1-click 'Reset &amp; Activate On This Device'.
-                </p>
-              </div>
-
-              <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1.5">
-                <div className="text-emerald-400 font-bold text-[11px] flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5" />
-                  <span>3. Tailwind CSS v4 Styling Engine Integration</span>
-                </div>
-                <p className="text-[10.5px] text-slate-300">
-                  <span className="text-amber-400 font-bold">[BEFORE]:</span> Uncompiled Tailwind classes caused unstyled text on dark background.<br />
-                  <span className="text-emerald-400 font-bold">[AFTER]:</span> Configured `@tailwindcss/vite` for full cyan glassmorphism UI.
-                </p>
-              </div>
-
-              <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1.5">
-                <div className="text-emerald-400 font-bold text-[11px] flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5" />
-                  <span>4. Accurate Multi-Field Node Search</span>
-                </div>
-                <p className="text-[10.5px] text-slate-300">
-                  <span className="text-amber-400 font-bold">[BEFORE]:</span> Search query was hardcoded to 'HUB-20'.<br />
-                  <span className="text-emerald-400 font-bold">[AFTER]:</span> Searches accurately by FAT ID, HUB, RSU, PON, Locality, and Address.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* 3. MANDATORY IN-APP OTA ENGINE */}
-          <div className={`p-4 rounded-2xl border space-y-3 ${
-            isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-white/[0.04] border-white/10'
-          }`}>
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-2">
-                  <h4 className="text-xs font-black flex items-center gap-1.5">
+                  <h4 className="text-xs font-black flex items-center gap-1.5 text-white">
                     <Download className="w-4 h-4 text-cyan-400" />
                     <span>In-App Firmware Updates &amp; OTA Engine</span>
                   </h4>
@@ -402,7 +320,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <button
                 onClick={handleCheckUpdate}
                 disabled={isCheckingUpdate}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs cursor-pointer shadow-sm transition-all active:scale-95 shrink-0"
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-extrabold text-xs cursor-pointer shadow-md transition-all active:scale-95 shrink-0"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isCheckingUpdate ? 'animate-spin' : ''}`} />
                 <span>{isCheckingUpdate ? 'Checking GitHub...' : 'Check For Updates'}</span>
@@ -410,7 +328,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
 
             {availableUpdate && (
-              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-cyan-950/60 to-blue-950/60 border border-cyan-400/60 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-cyan-950/80 to-blue-950/80 border border-cyan-400/60 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200 shadow-xl">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping" />
@@ -421,7 +339,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
                   <button
                     onClick={handleInstallUpdate}
-                    className="px-3 py-1 rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-slate-950 font-black text-xs font-mono flex items-center gap-1.5 cursor-pointer shadow-lg active:scale-95"
+                    className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-slate-950 font-black text-xs font-mono flex items-center gap-1.5 cursor-pointer shadow-lg active:scale-95"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>Patch In-App Now</span>
@@ -441,12 +359,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             )}
           </div>
 
-          {/* 4. GPS SENSOR & LOCATION SERVICES */}
-          <div className={`p-4 rounded-2xl border space-y-3.5 ${
-            isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-white/[0.04] border-white/10'
+          {/* 3. GPS SENSOR & LOCATION SERVICES */}
+          <div className={`p-4 rounded-2xl border space-y-3.5 shadow-md ${
+            isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-[#111625] border-white/10'
           }`}>
             <div>
-              <h4 className="text-xs font-black flex items-center gap-1.5">
+              <h4 className="text-xs font-black flex items-center gap-1.5 text-white">
                 <Navigation className="w-4 h-4 text-cyan-400" />
                 <span>GPS Sensor &amp; Location Services</span>
               </h4>
@@ -458,8 +376,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             {/* GPS Master Toggle */}
             <div className={`p-3 rounded-xl border flex items-center justify-between ${
               effectiveGpsEnabled 
-                ? isLightMode ? 'bg-blue-50/60 border-blue-200' : 'bg-cyan-950/20 border-cyan-500/30'
-                : isLightMode ? 'bg-amber-50/60 border-amber-200' : 'bg-amber-950/20 border-amber-500/30'
+                ? isLightMode ? 'bg-blue-50/60 border-blue-200' : 'bg-cyan-950/30 border-cyan-500/30'
+                : isLightMode ? 'bg-amber-50/60 border-amber-200' : 'bg-amber-950/30 border-amber-500/30'
             }`}>
               <div className="flex items-center gap-2.5">
                 <div className={`w-9 h-9 rounded-lg flex items-center justify-center font-bold ${
@@ -471,7 +389,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold">GPS Sensor Master</span>
+                    <span className="text-xs font-bold text-white">GPS Sensor Master</span>
                     <span className={`text-[9px] font-mono px-1.5 py-0.2 rounded font-bold border ${
                       effectiveGpsEnabled 
                         ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' 
@@ -506,7 +424,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             {/* Battery Saving for GPS */}
             <div className={`p-3 rounded-xl border flex items-center justify-between ${
               effectiveBatteryGps
-                ? isLightMode ? 'bg-emerald-50/60 border-emerald-200' : 'bg-emerald-950/20 border-emerald-500/30'
+                ? isLightMode ? 'bg-emerald-50/60 border-emerald-200' : 'bg-emerald-950/30 border-emerald-500/30'
                 : isLightMode ? 'bg-white border-slate-200' : 'bg-white/5 border-white/10'
             }`}>
               <div className="flex items-center gap-2.5">
@@ -519,7 +437,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold">Battery Saving Option for GPS</span>
+                    <span className="text-xs font-bold text-white">Battery Saving Option for GPS</span>
                   </div>
                   <p className="text-[10px] text-slate-400 mt-0.5">
                     Throttles GPS polling when stationary to preserve battery life
@@ -545,46 +463,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
           </div>
 
-          {/* 5. GITHUB CORPORATE ROSTER SYNC */}
-          <div className={`p-4 rounded-2xl border space-y-3 ${
-            isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-white/[0.04] border-white/10'
+          {/* 4. THEMES & COLORWAYS */}
+          <div className={`p-4 rounded-2xl border space-y-3.5 shadow-md ${
+            isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-[#111625] border-white/10'
           }`}>
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-xs font-black flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-cyan-400" />
-                  <span>GitHub Corporate Roster Sync</span>
-                </h4>
-                <p className={`text-[11px] mt-0.5 ${isLightMode ? 'text-slate-500' : 'text-neutral-400'}`}>
-                  Synchronizes verified technician IDs with official GitHub manifest
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleSyncGitHubManifest}
-                disabled={isSyncingGitHub}
-                className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-mono font-bold text-xs flex items-center gap-1.5 cursor-pointer transition-all active:scale-95"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${isSyncingGitHub ? 'animate-spin' : ''}`} />
-                <span>{isSyncingGitHub ? 'Syncing...' : 'Sync Roster'}</span>
-              </button>
-            </div>
-
-            {gitHubSyncResult && (
-              <p className="text-[10px] text-cyan-300 font-mono pt-1">
-                &gt; {gitHubSyncResult}
-              </p>
-            )}
-          </div>
-
-          {/* 6. THEMES & COLORWAYS */}
-          <div className={`p-4 rounded-2xl border space-y-3 ${
-            isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-white/[0.04] border-white/10'
-          }`}>
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="text-xs font-black flex items-center gap-1.5">
+                <h4 className="text-xs font-black flex items-center gap-1.5 text-white">
                   <Palette className="w-4 h-4 text-cyan-400" />
                   <span>Themes &amp; Colorways</span>
                 </h4>
@@ -634,7 +519,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           <span className="text-[9px] font-mono font-bold text-cyan-400">Active</span>
                         )}
                       </div>
-                      <div className="text-xs font-bold mt-1.5 truncate">{th.name}</div>
+                      <div className="text-xs font-bold mt-1.5 truncate text-white">{th.name}</div>
                     </button>
                   );
                 })}
@@ -642,13 +527,114 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
           </div>
 
-          {/* 7. LIVE VIDEO & STATIC WALLPAPERS */}
-          <div className={`p-4 rounded-2xl border space-y-3 ${
-            isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-white/[0.04] border-white/10'
+          {/* 5. GITHUB CORPORATE ROSTER SYNC */}
+          <div className={`p-4 rounded-2xl border space-y-3 shadow-md ${
+            isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-[#111625] border-white/10'
           }`}>
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-xs font-black flex items-center gap-1.5">
+                <h4 className="text-xs font-black flex items-center gap-1.5 text-white">
+                  <ShieldCheck className="w-4 h-4 text-cyan-400" />
+                  <span>GitHub Corporate Roster Sync</span>
+                </h4>
+                <p className={`text-[11px] mt-0.5 ${isLightMode ? 'text-slate-500' : 'text-neutral-400'}`}>
+                  Synchronizes verified technician IDs with official GitHub manifest
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleSyncGitHubManifest}
+                disabled={isSyncingGitHub}
+                className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-mono font-bold text-xs flex items-center gap-1.5 cursor-pointer transition-all active:scale-95"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isSyncingGitHub ? 'animate-spin' : ''}`} />
+                <span>{isSyncingGitHub ? 'Syncing...' : 'Sync Roster'}</span>
+              </button>
+            </div>
+
+            {gitHubSyncResult && (
+              <p className="text-[10px] text-cyan-300 font-mono pt-1">
+                &gt; {gitHubSyncResult}
+              </p>
+            )}
+          </div>
+
+          {/* 6. WHAT'S NEW IN THIS VERSION (FULL RELEASE CHANGELOG) */}
+          <div className={`p-4 rounded-2xl border space-y-3 shadow-md ${
+            isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-[#111625] border-white/10'
+          }`}>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h4 className="text-xs font-black flex items-center gap-1.5 text-white">
+                    <Info className="w-4 h-4 text-cyan-400" />
+                    <span>What's New in Version {currentVersion}</span>
+                  </h4>
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 font-bold border border-cyan-500/30">
+                    Changelog
+                  </span>
+                </div>
+                <p className={`text-[11px] mt-0.5 ${isLightMode ? 'text-slate-500' : 'text-neutral-400'}`}>
+                  Feature comparison &amp; performance upgrades (Before vs After)
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-2 text-xs font-mono">
+              <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1.5">
+                <div className="text-emerald-400 font-bold text-[11px] flex items-center gap-1.5">
+                  <CheckCircle className="w-3.5 h-3.5" />
+                  <span>1. Modern Glassmorphic Settings Interface</span>
+                </div>
+                <p className="text-[10.5px] text-slate-300">
+                  <span className="text-amber-400 font-bold">[BEFORE]:</span> Plain modal styling.<br />
+                  <span className="text-emerald-400 font-bold">[AFTER]:</span> Sleek cyan glassmorphism design system with modern cards &amp; live badges.
+                </p>
+              </div>
+
+              <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1.5">
+                <div className="text-emerald-400 font-bold text-[11px] flex items-center gap-1.5">
+                  <CheckCircle className="w-3.5 h-3.5" />
+                  <span>2. Direct Search List Navigation (No Suggestions Box)</span>
+                </div>
+                <p className="text-[10.5px] text-slate-300">
+                  <span className="text-amber-400 font-bold">[BEFORE]:</span> Autocomplete suggestions box overlapped search bar.<br />
+                  <span className="text-emerald-400 font-bold">[AFTER]:</span> Search results render directly in categorized list with 0ms latency.
+                </p>
+              </div>
+
+              <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1.5">
+                <div className="text-emerald-400 font-bold text-[11px] flex items-center gap-1.5">
+                  <CheckCircle className="w-3.5 h-3.5" />
+                  <span>3. In-App Mandatory OTA Firmware Patcher</span>
+                </div>
+                <p className="text-[10.5px] text-slate-300">
+                  <span className="text-amber-400 font-bold">[BEFORE]:</span> Updates redirected to external web browser.<br />
+                  <span className="text-emerald-400 font-bold">[AFTER]:</span> Mandatory updates patch directly inside the app with live progress bar.
+                </p>
+              </div>
+
+              <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1.5">
+                <div className="text-emerald-400 font-bold text-[11px] flex items-center gap-1.5">
+                  <CheckCircle className="w-3.5 h-3.5" />
+                  <span>4. Dynamic Semver Version Detection</span>
+                </div>
+                <p className="text-[10.5px] text-slate-300">
+                  <span className="text-amber-400 font-bold">[BEFORE]:</span> Hardcoded version badge caused version mismatch.<br />
+                  <span className="text-emerald-400 font-bold">[AFTER]:</span> Numeric semver rank comparison detects latest release instantly.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* 7. LIVE VIDEO WALLPAPERS */}
+          <div className={`p-4 rounded-2xl border space-y-3 shadow-md ${
+            isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-[#111625] border-white/10'
+          }`}>
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="text-xs font-black flex items-center gap-1.5 text-white">
                   <Video className="w-4 h-4 text-cyan-400" />
                   <span>Live Video Wallpapers</span>
                 </h4>
@@ -699,6 +685,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               })}
             </div>
           </div>
+
         </div>
       </div>
     </div>

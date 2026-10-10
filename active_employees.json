@@ -1,5 +1,5 @@
 {
-  "version": "3.6.0",
+  "version": "3.7.0",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -96,10 +96,10 @@
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "3.6.0",
-    "build": "Build 360 (LocFinder Pro v3.6.0)",
-    "releaseNotes": "Official Live Release v3.6.0: Removed search bar and search triggers from Dashboard home screen.",
+    "version": "3.7.0",
+    "build": "Build 370 (LocFinder Pro v3.7.0)",
+    "releaseNotes": "Official Live Release v3.7.0: Modern cyan glassmorphic settings page design and direct search list navigation without popup suggestions box.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.6.0/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.7.0/LocFinderPro.apk"
   }
 }
