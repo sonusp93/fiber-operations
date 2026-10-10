@@ -9,7 +9,6 @@
       "department": "Optical Transmission & FAT Maintenance",
       "status": "ACTIVE",
       "fieldPasscode": "1234",
-      "registeredDeviceId": "DEV-B30A616B38"
     },
     {
       "employeeId": "EMP002",
@@ -19,7 +18,6 @@
       "department": "Field Operations",
       "status": "ACTIVE",
       "fieldPasscode": "1234",
-      "registeredDeviceId": "DEV-73EB53263C"
     },
     {
       "employeeId": "EMP003",
