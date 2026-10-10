@@ -28,8 +28,7 @@
       "phone": "+91 98470 12347",
       "department": "Field Operations",
       "status": "ACTIVE",
-      "fieldPasscode": "1234",
-      "registeredDeviceId": "DEV-A91F24101B"
+      "fieldPasscode": "1234"
     },
     {
       "employeeId": "EMP004",
@@ -38,8 +37,7 @@
       "phone": "+91 98470 12348",
       "department": "Field Operations",
       "status": "ACTIVE",
-      "fieldPasscode": "1234",
-      "registeredDeviceId": "DEV-C82D39412E"
+      "fieldPasscode": "1234"
     },
     {
       "employeeId": "EMP005",
@@ -48,8 +46,7 @@
       "phone": "+91 98470 12349",
       "department": "Field Operations",
       "status": "ACTIVE",
-      "fieldPasscode": "1234",
-      "registeredDeviceId": "DEV-E73A48523F"
+      "fieldPasscode": "1234"
     },
     {
       "employeeId": "EMP006",
@@ -58,8 +55,7 @@
       "phone": "+91 98470 12350",
       "department": "Field Operations",
       "status": "ACTIVE",
-      "fieldPasscode": "1234",
-      "registeredDeviceId": "DEV-F64B57634A"
+      "fieldPasscode": "1234"
     },
     {
       "employeeId": "EMP007",
@@ -68,8 +64,7 @@
       "phone": "+91 98470 12351",
       "department": "Field Operations",
       "status": "ACTIVE",
-      "fieldPasscode": "1234",
-      "registeredDeviceId": "DEV-A15C66745B"
+      "fieldPasscode": "1234"
     },
     {
       "employeeId": "EMP008",
@@ -78,8 +73,7 @@
       "phone": "+91 98470 12352",
       "department": "Field Operations",
       "status": "ACTIVE",
-      "fieldPasscode": "1234",
-      "registeredDeviceId": "DEV-B26D75856C"
+      "fieldPasscode": "1234"
     },
     {
       "employeeId": "EMP009",
@@ -88,8 +82,7 @@
       "phone": "+91 98470 12353",
       "department": "Field Operations",
       "status": "ACTIVE",
-      "fieldPasscode": "1234",
-      "registeredDeviceId": "DEV-C37E84967D"
+      "fieldPasscode": "1234"
     },
     {
       "employeeId": "EMP010",
@@ -98,15 +91,14 @@
       "phone": "+91 98470 12354",
       "department": "Field Operations",
       "status": "ACTIVE",
-      "fieldPasscode": "1234",
-      "registeredDeviceId": "DEV-D48F93078E"
+      "fieldPasscode": "1234"
     }
   ],
   "revokedTechnicianIds": ["TECH-KRL-8092"],
   "latestAppUpdate": {
     "version": "2.0.0",
     "build": "Build 200 (LocFinder Pro v2.0.0)",
-    "releaseNotes": "Major Live OTA Release v2.0.0: Bulletproof public raw GitHub synchronization, native background download manager, package installer, 1-device 1-user hardware lock for all EMP001-EMP010 accounts, and instant OTA notification.",
+    "releaseNotes": "Major Live OTA Release v2.0.0: Bulletproof public raw GitHub synchronization, native background download manager, package installer, 1-device 1-user hardware lock for EMP001 and EMP002, free unassigned IDs EMP003-EMP010, and instant OTA notification.",
     "isMandatory": true,
     "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v2.0.0/LocFinderPro.apk"
   }
