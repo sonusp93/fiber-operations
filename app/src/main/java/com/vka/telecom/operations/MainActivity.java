@@ -36,12 +36,7 @@ public class MainActivity extends BridgeActivity {
 
         @JavascriptInterface
         public void downloadAndInstallApk(final String url) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    startApkDownload(url);
-                }
-            });
+            runOnUiThread(() -> startApkDownload(url));
         }
     }
 
@@ -49,7 +44,7 @@ public class MainActivity extends BridgeActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Register DownloadManager complete listener for OTA APK updates
+        // Register DownloadManager complete listener for 100% in-app OTA APK updates
         downloadReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -77,12 +72,11 @@ public class MainActivity extends BridgeActivity {
         super.onStart();
         setupApkDownloadListener();
 
-        // Clear web cache to ensure freshly compiled JS bundle executes
+        // Clear web cache and attach in-app AndroidInstaller Javascript Interface
         try {
             WebView webView = getBridge().getWebView();
             if (webView != null) {
                 webView.clearCache(true);
-                // Expose AndroidInstaller Javascript Interface for 100% In-App OTA Update
                 webView.addJavascriptInterface(new AndroidInstallerInterface(this), "AndroidInstaller");
             }
         } catch (Exception e) {
@@ -134,7 +128,7 @@ public class MainActivity extends BridgeActivity {
             request.setTitle("LocFinder Pro OTA Update");
             request.setDescription("Downloading latest LocFinder Pro field engine update...");
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-            request.setDestinationUri(Uri.fromFile(destinationFile));
+            request.setDestinationInExternalFilesDir(this, Environment.DIRECTORY_DOWNLOADS, "LocFinderPro_Update.apk");
             request.setMimeType("application/vnd.android.package-archive");
 
             downloadId = downloadManager.enqueue(request);
@@ -158,11 +152,7 @@ public class MainActivity extends BridgeActivity {
 
             File destinationFile = new File(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "LocFinderPro_Update.apk");
             if (!destinationFile.exists()) {
-                destinationFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "LocFinderPro_Update.apk");
-            }
-
-            if (!destinationFile.exists()) {
-                Toast.makeText(context, "Update file not found. Retrying...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Update file download incomplete. Retrying...", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -170,7 +160,7 @@ public class MainActivity extends BridgeActivity {
 
             Intent installIntent = new Intent(Intent.ACTION_VIEW);
             installIntent.setDataAndType(apkUri, "application/vnd.android.package-archive");
-            installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);
 
             List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(installIntent, PackageManager.MATCH_DEFAULT_ONLY);
             for (ResolveInfo resolveInfo : resInfoList) {
