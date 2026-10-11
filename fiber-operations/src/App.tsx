@@ -20,6 +20,7 @@ import { LiveVideoWallpaper } from './components/LiveVideoWallpaper';
 import { CompanySecurityService, AppOtaUpdateInfo, DEFAULT_OFFICIAL_EMPLOYEES } from './services/companySecurityService';
 import { DeviceWipedLockdownScreen } from './components/DeviceWipedLockdownScreen';
 import { MandatoryOtaUpdateModal } from './components/MandatoryOtaUpdateModal';
+import { RevocationWarningModal } from './components/RevocationWarningModal';
 import { Zap, RefreshCw } from 'lucide-react';
 
 export default function App() {
@@ -143,6 +144,7 @@ export default function App() {
   // 3. AUTO SCAN APP UPDATE ON APP OPEN & GITHUB RESIGNED EMPLOYEE REVOCATION
   const [pendingMandatoryUpdate, setPendingMandatoryUpdate] = useState<AppOtaUpdateInfo | null>(null);
   const [startupScanNotice, setStartupScanNotice] = useState<string | null>(null);
+  const [revocationAlert, setRevocationAlert] = useState<{ name: string; id: string; reason: string } | null>(null);
 
   // COMPANY DATA WIPE LISTENER & AUTOMATIC GITHUB REVOCATION CHECK ON APP OPEN
   useEffect(() => {
@@ -184,6 +186,39 @@ export default function App() {
       isMounted = false;
       window.removeEventListener('company_data_wipe_executed', handleWiped);
     };
+  }, [currentUser]);
+
+  // REAL-TIME ACCESS REVOCATION & CONTINUOUS BACKGROUND ROSTER SYNC (60s BALANCED)
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const runBackgroundRosterSync = async () => {
+      try {
+        const scanRes = await CompanySecurityService.autoScanGitHubUpdatesAndSecurity(currentUser);
+        if (scanRes.wiped) {
+          const name = currentUser.technicianName;
+          const id = currentUser.technicianId;
+          setIsDeviceWiped(false);
+          setCurrentUser(null);
+          localStorage.removeItem('locfinder_auth_user');
+          setRevocationAlert({
+            name,
+            id,
+            reason: 'Employee ID deauthorized in corporate GitHub roster'
+          });
+        } else if (
+          scanRes.updateAvailable &&
+          scanRes.updateInfo &&
+          CompanySecurityService.isVersionNewer(CompanySecurityService.getCurrentInstalledVersion().version, scanRes.updateInfo.version)
+        ) {
+          setPendingMandatoryUpdate(scanRes.updateInfo);
+        }
+      } catch {}
+    };
+
+    const interval = setInterval(runBackgroundRosterSync, 60000);
+
+    return () => clearInterval(interval);
   }, [currentUser]);
 
   const handleWallpaperChange = (newWallpaper: string) => {
@@ -802,6 +837,17 @@ export default function App() {
               setIsDeviceWiped(true);
               setCurrentUser(null);
             }}
+            isLightMode={isLightMode}
+          />
+        )}
+
+        {/* REAL-TIME ACCESS REVOCATION ALERT MODAL */}
+        {revocationAlert && (
+          <RevocationWarningModal
+            technicianName={revocationAlert.name}
+            technicianId={revocationAlert.id}
+            reason={revocationAlert.reason}
+            onAcknowledge={() => setRevocationAlert(null)}
             isLightMode={isLightMode}
           />
         )}

@@ -1,5 +1,5 @@
 {
-  "version": "7.3.0",
+  "version": "7.5.0",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -96,10 +96,10 @@
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "7.3.0",
-    "build": "Build 730 (LocFinder Pro v7.3.0)",
-    "releaseNotes": "Official Live Major Release v7.3.0: Native setDestinationInExternalFilesDir DownloadManager API fix for 100% in-app automatic APK download and package installer launch.",
+    "version": "7.5.0",
+    "build": "Build 750 (LocFinder Pro v7.5.0)",
+    "releaseNotes": "Official Live Major Release v7.5.0: Real-time background employee access revocation detector, automatic session termination, and warning alert modal.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v7.3.0/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v7.5.0/LocFinderPro.apk"
   }
 }
