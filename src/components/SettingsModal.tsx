@@ -4,7 +4,6 @@ import {
   Moon, 
   Sun, 
   RefreshCw, 
-  Check, 
   Sparkles as LucideSparkles,
   ShieldCheck, 
   Video,
@@ -21,7 +20,9 @@ import {
   Palette,
   Lock,
   Info,
-  CheckCircle
+  CheckCircle,
+  Image as ImageIcon,
+  Upload
 } from 'lucide-react';
 import { UserAuthProfile } from './TechnicianLoginPage';
 import { CompanySecurityService } from '../services/companySecurityService';
@@ -29,7 +30,7 @@ import { CompanySecurityService } from '../services/companySecurityService';
 // Crash-proof Sparkles icon fallback
 const Sparkles = LucideSparkles || ((props: any) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.937A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.962 0z" />
+    <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.937A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .962 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.962 0z" />
     <path d="M20 3v4" />
     <path d="M22 5h-4" />
     <path d="M4 17v2" />
@@ -174,6 +175,20 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     }
   };
 
+  const handleCustomImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (uploadEvent) => {
+        const result = uploadEvent.target?.result as string;
+        if (result) {
+          onWallpaperChange(result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleCustomVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -204,6 +219,23 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     { id: 'light_pure_pearl', name: 'Pure Minimal Pearl', accent: '#475569', preview: 'bg-zinc-100 border-zinc-300' }
   ];
 
+  const STATIC_WALLPAPERS = [
+    { id: 'void', label: 'Pure Black Void', desc: 'AMOLED Black', preview: 'bg-black' },
+    { id: 'grid', label: 'Cyber Grid', desc: '3D Optical Grid', preview: 'bg-cyan-950/80 border-cyan-500/40' },
+    { id: 'matrix', label: 'Matrix Code', desc: 'Terminal Streams', preview: 'bg-emerald-950/80 border-emerald-500/40' },
+    { id: 'space', label: 'Deep Space', desc: 'Nebula Glow', preview: 'bg-purple-950/80 border-purple-500/40' },
+    { id: 'sunset', label: 'Solar Amber', desc: 'Amber Glow', preview: 'bg-amber-950/80 border-amber-500/40' }
+  ];
+
+  const LIVE_VIDEOS = [
+    { id: 'video:cyber_fiber', label: 'Cyber Fiber Stream', icon: Play, desc: 'Laser streams' },
+    { id: 'video:matrix_grid', label: '3D Matrix Grid', icon: Film, desc: 'Perspective grid' },
+    { id: 'video:synthwave_neon', label: 'Synthwave Neon', icon: Sparkles, desc: 'Neon streams' },
+    { id: 'video:aurora_borealis', label: 'Aurora Ripples', icon: Layers, desc: 'Emerald aurora' },
+    { id: 'video:quantum_particles', label: 'Quantum Rays', icon: Sparkles, desc: 'Photon rays' },
+    { id: 'video:deep_space', label: 'Nebula Drift', icon: Video, desc: 'Cosmic violet' }
+  ];
+
   const currentVersion = CompanySecurityService.getCurrentInstalledVersion().version;
 
   return (
@@ -215,7 +247,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           ? 'bg-white border-slate-200 text-slate-900'
           : 'bg-[#0a0d18] border-white/15 text-neutral-100'
       }`}>
-        {/* Modern Cyan Glassmorphic Header */}
+        {/* Header */}
         <div className={`flex justify-between items-center pb-3.5 border-b ${
           isLightMode ? 'border-slate-200' : 'border-white/10'
         }`}>
@@ -295,7 +327,113 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             )}
           </div>
 
-          {/* 2. MANDATORY IN-APP OTA ENGINE */}
+          {/* 2. WALLPAPERS & VISUAL BACKGROUNDS (STATIC, LIVE VIDEO & CUSTOM UPLOADS) */}
+          <div className={`p-4 rounded-2xl border space-y-3.5 shadow-md ${
+            isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-[#111625] border-white/10'
+          }`}>
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <div>
+                <h4 className="text-xs font-black flex items-center gap-1.5 text-white">
+                  <ImageIcon className="w-4 h-4 text-cyan-400" />
+                  <span>Wallpapers &amp; Background Styles</span>
+                </h4>
+                <p className={`text-[11px] mt-0.5 ${isLightMode ? 'text-slate-500' : 'text-neutral-400'}`}>
+                  Choose static AMOLED wallpapers, live video backgrounds, or upload custom media
+                </p>
+              </div>
+
+              {/* Custom Media Upload Buttons */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-600/10 hover:bg-cyan-600/20 border border-cyan-500/40 text-cyan-400 font-bold text-[11px] cursor-pointer transition-all active:scale-95">
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>Image</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleCustomImageUpload}
+                    className="hidden"
+                  />
+                </label>
+
+                <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600/10 hover:bg-purple-600/20 border border-purple-500/40 text-purple-300 font-bold text-[11px] cursor-pointer transition-all active:scale-95">
+                  <Film className="w-3.5 h-3.5" />
+                  <span>Video</span>
+                  <input
+                    type="file"
+                    accept="video/mp4,video/webm"
+                    onChange={handleCustomVideoUpload}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+
+            {/* A. Static Wallpapers Grid */}
+            <div className="space-y-1.5 pt-1">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                Static AMOLED Wallpapers:
+              </span>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {STATIC_WALLPAPERS.map((w) => {
+                  const isSelected = currentWallpaper === w.id;
+                  return (
+                    <button
+                      key={w.id}
+                      onClick={() => onWallpaperChange(w.id)}
+                      className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all ${w.preview} ${
+                        isSelected
+                          ? 'border-cyan-400 ring-2 ring-cyan-400 text-white shadow-lg shadow-cyan-500/30 scale-[1.02]'
+                          : 'border-white/10 opacity-75 hover:opacity-100 text-slate-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="w-2.5 h-2.5 rounded-full bg-cyan-400" />
+                        {isSelected && (
+                          <span className="text-[9px] font-mono font-bold text-cyan-400">Active</span>
+                        )}
+                      </div>
+                      <div className="text-xs font-bold mt-1.5 truncate text-white">{w.label}</div>
+                      <div className="text-[9px] font-mono text-slate-400 mt-0.5">{w.desc}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* B. Live Video Wallpapers Grid */}
+            <div className="space-y-1.5 pt-2 border-t border-white/10">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                Live Video Motion Backgrounds:
+              </span>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {LIVE_VIDEOS.map((v) => {
+                  const isSelected = currentWallpaper === v.id;
+                  return (
+                    <button
+                      key={v.id}
+                      onClick={() => onWallpaperChange(v.id)}
+                      className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all bg-gradient-to-br from-[#0c1424] to-black ${
+                        isSelected
+                          ? 'border-cyan-400 ring-2 ring-cyan-400 text-white shadow-lg shadow-cyan-500/30 scale-[1.02]'
+                          : 'border-white/10 opacity-70 hover:opacity-100 text-neutral-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <v.icon className="w-3.5 h-3.5 text-cyan-400" />
+                        {isSelected && (
+                          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+                        )}
+                      </div>
+                      <div className="text-xs font-bold mt-1 truncate text-white">{v.label}</div>
+                      <div className="text-[9px] font-mono text-cyan-400/80 mt-0.5">{v.desc}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* 3. MANDATORY IN-APP OTA ENGINE */}
           <div className={`p-4 rounded-2xl border space-y-3.5 shadow-md ${
             isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-[#111625] border-cyan-500/20'
           }`}>
@@ -364,7 +502,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             )}
           </div>
 
-          {/* 3. GPS SENSOR & LOCATION SERVICES */}
+          {/* 4. GPS SENSOR & LOCATION SERVICES */}
           <div className={`p-4 rounded-2xl border space-y-3.5 shadow-md ${
             isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-[#111625] border-white/10'
           }`}>
@@ -468,7 +606,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
           </div>
 
-          {/* 4. THEMES & COLORWAYS */}
+          {/* 5. THEMES & COLORWAYS */}
           <div className={`p-4 rounded-2xl border space-y-3.5 shadow-md ${
             isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-[#111625] border-white/10'
           }`}>
@@ -532,7 +670,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
           </div>
 
-          {/* 5. GITHUB CORPORATE ROSTER SYNC */}
+          {/* 6. GITHUB CORPORATE ROSTER SYNC */}
           <div className={`p-4 rounded-2xl border space-y-3 shadow-md ${
             isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-[#111625] border-white/10'
           }`}>
@@ -565,7 +703,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             )}
           </div>
 
-          {/* 6. WHAT'S NEW IN THIS VERSION (FULL RELEASE CHANGELOG) */}
+          {/* 7. WHAT'S NEW IN THIS VERSION (FULL RELEASE CHANGELOG) */}
           <div className={`p-4 rounded-2xl border space-y-3 shadow-md ${
             isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-[#111625] border-white/10'
           }`}>
@@ -590,104 +728,35 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1.5">
                 <div className="text-emerald-400 font-bold text-[11px] flex items-center gap-1.5">
                   <CheckCircle className="w-3.5 h-3.5" />
-                  <span>1. Modern Glassmorphic Settings Interface</span>
+                  <span>1. Dedicated Wallpaper &amp; Media Customization Card</span>
                 </div>
                 <p className="text-[10.5px] text-slate-300">
-                  <span className="text-amber-400 font-bold">[BEFORE]:</span> Plain modal styling.<br />
-                  <span className="text-emerald-400 font-bold">[AFTER]:</span> Sleek cyan glassmorphism design system with modern cards &amp; live badges.
+                  <span className="text-amber-400 font-bold">[BEFORE]:</span> Wallpapers were listed at the bottom.<br />
+                  <span className="text-emerald-400 font-bold">[AFTER]:</span> Dedicated Wallpaper section with 1-click Custom Image &amp; Video uploads and AMOLED themes.
                 </p>
               </div>
 
               <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1.5">
                 <div className="text-emerald-400 font-bold text-[11px] flex items-center gap-1.5">
                   <CheckCircle className="w-3.5 h-3.5" />
-                  <span>2. Direct Search List Navigation (No Suggestions Box)</span>
+                  <span>2. In-App Native APK Installer Bridge</span>
                 </div>
                 <p className="text-[10.5px] text-slate-300">
-                  <span className="text-amber-400 font-bold">[BEFORE]:</span> Autocomplete suggestions box overlapped search bar.<br />
-                  <span className="text-emerald-400 font-bold">[AFTER]:</span> Search results render directly in categorized list with 0ms latency.
+                  <span className="text-amber-400 font-bold">[BEFORE]:</span> Redirected to external browser.<br />
+                  <span className="text-emerald-400 font-bold">[AFTER]:</span> Downloads and launches package installer directly inside the app.
                 </p>
               </div>
 
               <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1.5">
                 <div className="text-emerald-400 font-bold text-[11px] flex items-center gap-1.5">
                   <CheckCircle className="w-3.5 h-3.5" />
-                  <span>3. In-App Mandatory OTA Firmware Patcher</span>
+                  <span>3. Pure Black AMOLED Page Backgrounds</span>
                 </div>
                 <p className="text-[10.5px] text-slate-300">
-                  <span className="text-amber-400 font-bold">[BEFORE]:</span> Updates redirected to external web browser.<br />
-                  <span className="text-emerald-400 font-bold">[AFTER]:</span> Mandatory updates patch directly inside the app with live progress bar.
+                  <span className="text-amber-400 font-bold">[BEFORE]:</span> Mixed navy blue background colors.<br />
+                  <span className="text-emerald-400 font-bold">[AFTER]:</span> Pure `#000000` AMOLED black background across all screens.
                 </p>
               </div>
-
-              <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1.5">
-                <div className="text-emerald-400 font-bold text-[11px] flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5" />
-                  <span>4. Dynamic Semver Version Detection</span>
-                </div>
-                <p className="text-[10.5px] text-slate-300">
-                  <span className="text-amber-400 font-bold">[BEFORE]:</span> Hardcoded version badge caused version mismatch.<br />
-                  <span className="text-emerald-400 font-bold">[AFTER]:</span> Numeric semver rank comparison detects latest release instantly.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* 7. LIVE VIDEO WALLPAPERS */}
-          <div className={`p-4 rounded-2xl border space-y-3 shadow-md ${
-            isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-[#111625] border-white/10'
-          }`}>
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="text-xs font-black flex items-center gap-1.5 text-white">
-                  <Video className="w-4 h-4 text-cyan-400" />
-                  <span>Live Video Wallpapers</span>
-                </h4>
-              </div>
-
-              <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-600/10 hover:bg-cyan-600/20 border border-cyan-500/40 text-cyan-400 font-bold text-[11px] cursor-pointer transition-all active:scale-95">
-                <Film className="w-3.5 h-3.5" />
-                <span>Upload Video</span>
-                <input
-                  type="file"
-                  accept="video/mp4,video/webm"
-                  onChange={handleCustomVideoUpload}
-                  className="hidden"
-                />
-              </label>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {[
-                { id: 'video:cyber_fiber', label: 'Cyber Fiber', icon: Play, desc: 'Laser streams' },
-                { id: 'video:matrix_grid', label: 'Matrix Grid', icon: Film, desc: '3D perspective' },
-                { id: 'video:synthwave_neon', label: 'Synthwave Neon', icon: Sparkles, desc: 'Magenta streams' },
-                { id: 'video:aurora_borealis', label: 'Aurora Borealis', icon: Layers, desc: 'Emerald ripples' },
-                { id: 'video:quantum_particles', label: 'Quantum Rays', icon: Sparkles, desc: 'Photon particles' },
-                { id: 'video:deep_space', label: 'Nebula Drift', icon: Video, desc: 'Cosmic violet' }
-              ].map((v) => {
-                const isSelected = currentWallpaper === v.id;
-                return (
-                  <button
-                    key={v.id}
-                    onClick={() => onWallpaperChange(v.id)}
-                    className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all bg-gradient-to-br from-[#0c1424] to-black ${
-                      isSelected
-                        ? 'border-cyan-400 ring-2 ring-cyan-400 text-white shadow-lg shadow-cyan-500/30 scale-[1.02]'
-                        : 'border-white/10 opacity-70 hover:opacity-100 text-neutral-300'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <v.icon className="w-3.5 h-3.5 text-cyan-400" />
-                      {isSelected && (
-                        <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-                      )}
-                    </div>
-                    <div className="text-xs font-bold mt-1 truncate">{v.label}</div>
-                    <div className="text-[9px] font-mono text-cyan-400/80 mt-0.5">{v.desc}</div>
-                  </button>
-                );
-              })}
             </div>
           </div>
 
