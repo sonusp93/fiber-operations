@@ -1,5 +1,5 @@
 {
-  "version": "7.1.0",
+  "version": "7.2.0",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -96,10 +96,10 @@
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "7.1.0",
-    "build": "Build 710 (LocFinder Pro v7.1.0)",
-    "releaseNotes": "Official Live Release v7.1.0: Standardized GPS distance calculation engine and removed dummy optical power dBm fields.",
+    "version": "7.2.0",
+    "build": "Build 720 (LocFinder Pro v7.2.0)",
+    "releaseNotes": "Official Live Release v7.2.0: Balanced non-blocking GitHub roster background sync with 60s cache throttling and zero battery drain.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v7.1.0/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v7.2.0/LocFinderPro.apk"
   }
 }

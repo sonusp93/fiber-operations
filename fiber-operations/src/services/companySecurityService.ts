@@ -152,13 +152,13 @@ export const DEFAULT_OFFICIAL_EMPLOYEES: CompanyEmployee[] = [
 
 // Current installed app version (LocFinder Pro Official Release)
 export const CURRENT_APP_VERSION = {
-  version: '7.1.0',
-  build: 'Build 710 (LocFinder Pro v7.1.0)'
+  version: '7.2.0',
+  build: 'Build 720 (LocFinder Pro v7.2.0)'
 };
 
 // Default corporate policy template pointing to company GitHub repository
 const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
-  version: '7.1.0',
+  version: '7.2.0',
   lastUpdated: new Date().toISOString(),
   globalWipeRevision: 1,
   revokedTechnicianIds: [],
@@ -167,12 +167,12 @@ const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
   githubRepoSource: 'https://raw.githubusercontent.com/sonusp93/fiber-operations/main/active_employees.json',
   activeEmployees: DEFAULT_OFFICIAL_EMPLOYEES,
   latestAppUpdate: {
-    version: '7.1.0',
-    build: 'Build 710 (Official GitHub Release)',
-    releaseNotes: 'Official Live Release v7.1.0: Standardized GPS distance calculation engine and removed dummy optical power dBm fields.',
+    version: '7.2.0',
+    build: 'Build 720 (Official GitHub Release)',
+    releaseNotes: 'Official Live Release v7.2.0: Balanced non-blocking GitHub roster background sync with 60s cache throttling and zero battery drain.',
     isMandatory: true,
     publishedAt: new Date().toISOString(),
-    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v7.1.0/LocFinderPro.apk'
+    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v7.2.0/LocFinderPro.apk'
   }
 };
 
@@ -420,11 +420,15 @@ export class CompanySecurityService {
     }
   }
 
+  private static lastSyncTime = 0;
+  private static cachedSyncRes: any = null;
+
   /**
    * Fetch company employee roster & revocation policy from GitHub raw repository
    * Without requiring ANY proprietary company server!
+   * Balanced 60s cache-throttle to prevent CPU/battery drain.
    */
-  static async syncWithGitHubPolicy(): Promise<{ 
+  static async syncWithGitHubPolicy(forceRefresh = false): Promise<{
     success: boolean; 
     policy: CompanyRevocationPolicy; 
     employeesCount: number;
@@ -433,6 +437,10 @@ export class CompanySecurityService {
     hasNewUpdate: boolean;
     updateInfo?: AppOtaUpdateInfo;
   }> {
+    if (!forceRefresh && this.cachedSyncRes && Date.now() - this.lastSyncTime < 60000) {
+      return this.cachedSyncRes;
+    }
+
     const token = this.getGithubToken();
     this.recordHeartbeat();
 
@@ -535,7 +543,7 @@ export class CompanySecurityService {
         const current = this.getCurrentInstalledVersion();
         const hasNewUpdate = this.isVersionNewer(current.version, updateObj.version);
 
-        return {
+        const res = {
           success: true,
           policy: mergedPolicy,
           employeesCount: employees.length,
@@ -544,6 +552,9 @@ export class CompanySecurityService {
           hasNewUpdate,
           updateInfo: hasNewUpdate ? updateObj : undefined
         };
+        CompanySecurityService.cachedSyncRes = res;
+        CompanySecurityService.lastSyncTime = Date.now();
+        return res;
       }
     } catch {
       // GitHub network or CORS unreachable in offline corridor
