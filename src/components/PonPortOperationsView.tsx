@@ -33,7 +33,7 @@ export const PonPortOperationsView: React.FC<PonPortOperationsViewProps> = ({
     <div className={`flex flex-col h-full overflow-y-auto pb-8 select-none transition-colors duration-200 ${
       isLightMode
         ? 'bg-[#f4f2ef] text-neutral-900'
-        : 'bg-[#0e131f] bg-[radial-gradient(ellipse_100%_60%_at_50%_-10%,rgba(20,45,75,0.4),rgba(14,19,31,1))] text-neutral-100'
+        : 'bg-black text-neutral-100'
     }`}>
       {/* Top Header Card */}
       <div className="p-3.5 pb-1 max-w-lg mx-auto w-full">

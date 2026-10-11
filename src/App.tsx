@@ -436,7 +436,7 @@ export default function App() {
   return (
     <div
       className={`relative w-full h-screen min-h-screen flex flex-col overflow-hidden transition-smooth-120 select-none animate-app-opening ${
-        isLightMode ? 'bg-[#f8fafc] text-slate-900' : 'bg-transparent text-slate-100'
+        isLightMode ? 'bg-[#f8fafc] text-slate-900' : 'bg-black text-slate-100'
       }`}
       style={
         isLightMode

@@ -88,7 +88,7 @@ const NetworkHierarchyViewComp: React.FC<NetworkHierarchyViewProps> = ({
     <div className={`flex flex-col h-full w-full overflow-hidden select-none transition-colors duration-200 ${
       isLightMode
         ? 'bg-[#f8fafc] text-slate-900'
-        : 'bg-transparent text-slate-100'
+        : 'bg-black text-slate-100'
     }`}>
       {/* 2ND ROW: Compact City Filter Bar - NO BLACK BORDERS */}
       <div className="flex-shrink-0 z-20 px-3 pt-1 pb-2 max-w-4xl lg:max-w-5xl mx-auto w-full">
