@@ -152,13 +152,13 @@ export const DEFAULT_OFFICIAL_EMPLOYEES: CompanyEmployee[] = [
 
 // Current installed app version (LocFinder Pro Official Release)
 export const CURRENT_APP_VERSION = {
-  version: '5.0.0',
-  build: 'Build 500 (LocFinder Pro v5.0.0)'
+  version: '5.1.0',
+  build: 'Build 510 (LocFinder Pro v5.1.0)'
 };
 
 // Default corporate policy template pointing to company GitHub repository
 const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
-  version: '5.0.0',
+  version: '5.1.0',
   lastUpdated: new Date().toISOString(),
   globalWipeRevision: 1,
   revokedTechnicianIds: [],
@@ -167,12 +167,12 @@ const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
   githubRepoSource: 'https://raw.githubusercontent.com/sonusp93/fiber-operations/main/active_employees.json',
   activeEmployees: DEFAULT_OFFICIAL_EMPLOYEES,
   latestAppUpdate: {
-    version: '5.0.0',
-    build: 'Build 500 (Official GitHub Release)',
-    releaseNotes: 'Official Live Major Release v5.0.0: Public storage package installer URI permissions fix, automatic Android 8.0+ installer launcher, and complete version synchronization.',
+    version: '5.1.0',
+    build: 'Build 510 (Official GitHub Release)',
+    releaseNotes: 'Official Live Major Release v5.1.0: Added animated entrance popup modals with heavy background blur for FAT, HUB, RSU, and PON Port views.',
     isMandatory: true,
     publishedAt: new Date().toISOString(),
-    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v5.0.0/LocFinderPro.apk'
+    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v5.1.0/LocFinderPro.apk'
   }
 };
 

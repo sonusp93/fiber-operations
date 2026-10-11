@@ -84,15 +84,11 @@ export const FatDetailsUnifiedView: React.FC<FatDetailsUnifiedViewProps> = ({
           handleAnimatedClose();
         }
       }}
-      className={`fixed inset-0 z-50 flex items-center justify-center p-3 select-none ${
-        isLightMode
-          ? 'bg-black/25 backdrop-blur-[6px]'
-          : 'bg-black/50 backdrop-blur-[6px]'
-      } ${
-        isClosing ? 'animate-backdrop-fade-out pointer-events-none' : 'animate-backdrop-fade-in'
+      className={`fixed inset-0 z-50 flex items-center justify-center p-3 select-none bg-black/80 backdrop-blur-2xl animate-in fade-in duration-200 ${
+        isClosing ? 'animate-backdrop-fade-out pointer-events-none' : ''
       }`}
     >
-      {/* SAME-SIZE POPUP MODAL MATCHING NAVIGATION POPUP MODAL (max-w-md) */}
+      {/* POPUP MODAL WITH CYAN GLASSMORPHISM & HEAVY BACKGROUND BLUR */}
       <div
         onClick={(e) => e.stopPropagation()}
         className={`w-full max-w-md max-h-[85vh] rounded-[28px] flex flex-col overflow-hidden shadow-2xl transition-all border ${
@@ -100,7 +96,7 @@ export const FatDetailsUnifiedView: React.FC<FatDetailsUnifiedViewProps> = ({
         } ${
           isLightMode
             ? 'bg-white text-slate-900 border-slate-200 shadow-xl'
-            : 'bg-[#0f121d] text-neutral-100 border-white/15 shadow-[0_25px_60px_rgba(0,0,0,0.92)]'
+            : 'bg-[#0c101c] text-neutral-100 border-cyan-500/40 shadow-[0_25px_60px_rgba(0,0,0,0.95)]'
         }`}
       >
         {/* Modal Header */}

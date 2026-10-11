@@ -10,6 +10,9 @@ import { NavigationTarget } from './components/InbuiltDirectionMap';
 import { NavigationPopupModal } from './components/NavigationPopupModal';
 import { NetworkHierarchyView } from './components/NetworkHierarchyView';
 import { FatDetailsUnifiedView } from './components/FatDetailsUnifiedView';
+import { HubDetailsPopupModal } from './components/HubDetailsPopupModal';
+import { RsuDetailsPopupModal } from './components/RsuDetailsPopupModal';
+import { PonPortDetailsPopupModal } from './components/PonPortDetailsPopupModal';
 import { SettingsModal } from './components/SettingsModal';
 import { RadarScanningView } from './components/RadarScanningView';
 import { TechnicianLoginPage, UserAuthProfile } from './components/TechnicianLoginPage';
@@ -62,6 +65,9 @@ export default function App() {
   // 2. APP NAVIGATION & SELECTION STATE
   const [currentTab, setCurrentTab] = useState<VideoTabType>('HOME');
   const [selectedFat, setSelectedFat] = useState<FatRecord | null>(null);
+  const [selectedHubModal, setSelectedHubModal] = useState<any | null>(null);
+  const [selectedRsuModal, setSelectedRsuModal] = useState<any | null>(null);
+  const [selectedPonModal, setSelectedPonModal] = useState<any | null>(null);
   const [activeNavTarget, setActiveNavTarget] = useState<NavigationTarget | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isLightMode, setIsLightMode] = useState(() => {
@@ -660,6 +666,39 @@ export default function App() {
               onBack={() => setSelectedFat(null)}
               onStartNavigation={handleStartFatNavigation}
               onShowOnMap={handleShowOnHubTab}
+              isLightMode={isLightMode}
+            />
+          )}
+
+          {/* HUB DETAILS CENTER POPUP MODAL */}
+          {selectedHubModal && (
+            <HubDetailsPopupModal
+              hub={selectedHubModal}
+              onClose={() => setSelectedHubModal(null)}
+              onSelectFat={(fat) => setSelectedFat(fat)}
+              onStartNavigation={handleStartHubNavigation}
+              isLightMode={isLightMode}
+            />
+          )}
+
+          {/* RSU DETAILS CENTER POPUP MODAL */}
+          {selectedRsuModal && (
+            <RsuDetailsPopupModal
+              rsu={selectedRsuModal}
+              onClose={() => setSelectedRsuModal(null)}
+              onSelectFat={(fat) => setSelectedFat(fat)}
+              onStartNavigation={handleStartRsuNavigation}
+              isLightMode={isLightMode}
+            />
+          )}
+
+          {/* PON PORT DETAILS CENTER POPUP MODAL */}
+          {selectedPonModal && (
+            <PonPortDetailsPopupModal
+              pon={selectedPonModal}
+              onClose={() => setSelectedPonModal(null)}
+              onSelectFat={(fat) => setSelectedFat(fat)}
+              onStartNavigation={handleStartFatNavigation}
               isLightMode={isLightMode}
             />
           )}
