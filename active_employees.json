@@ -1,5 +1,5 @@
 {
-  "version": "7.5.0",
+  "version": "8.0.0",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -96,10 +96,10 @@
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "7.5.0",
-    "build": "Build 750 (LocFinder Pro v7.5.0)",
-    "releaseNotes": "Official Live Major Release v7.5.0: Real-time background employee access revocation detector, automatic session termination, and warning alert modal.",
+    "version": "8.0.0",
+    "build": "Build 800 (LocFinder Pro v8.0.0)",
+    "releaseNotes": "Official Live Major Release v8.0.0: Full-screen custom image & live video wallpapers rendering seamlessly behind all glassmorphic pages.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v7.5.0/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v8.0.0/LocFinderPro.apk"
   }
 }

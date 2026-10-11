@@ -1277,7 +1277,7 @@ const DashboardModelViewComp: React.FC<DashboardModelViewProps> = ({
       className={`flex flex-col h-full overflow-y-auto pb-6 select-none transition-colors duration-200 ${
         isLightMode
           ? 'bg-[#f8fafc] text-slate-900'
-          : 'bg-black text-slate-100'
+          : 'bg-black/30 text-slate-100'
       }`}
     >
       <div className="px-4 sm:px-6 pt-2 pb-28 space-y-4 max-w-4xl mx-auto w-full">

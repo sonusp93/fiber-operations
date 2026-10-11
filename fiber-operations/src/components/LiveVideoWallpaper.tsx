@@ -9,37 +9,63 @@ export const LiveVideoWallpaper: React.FC<LiveVideoWallpaperProps> = ({
   wallpaper,
   isLightMode = false
 }) => {
-  // If light mode is active or wallpaper is standard static, do not render video wallpaper
-  if (isLightMode) return null;
+  // If light mode is active or wallpaper is default void, do not render video/custom wallpaper
+  if (isLightMode || !wallpaper || wallpaper === 'void') return null;
 
-  const isCustomVideo = wallpaper.startsWith('data:video/') || 
+  const isCustomImage =
+    wallpaper.startsWith('data:image/') ||
     wallpaper.startsWith('blob:') || 
-    wallpaper.endsWith('.mp4') || 
+    wallpaper.startsWith('http') ||
+    wallpaper.endsWith('.png') ||
+    wallpaper.endsWith('.jpg') ||
+    wallpaper.endsWith('.jpeg') ||
+    wallpaper.endsWith('.webp');
+
+  const isCustomVideo =
+    wallpaper.startsWith('data:video/') ||
+    wallpaper.endsWith('.mp4') ||
     wallpaper.endsWith('.webm');
 
   const isPresetVideo = wallpaper.startsWith('video:');
 
-  if (!isCustomVideo && !isPresetVideo) return null;
+  // Custom uploaded static image background
+  if (isCustomImage) {
+    return (
+      <div
+        className="fixed inset-0 z-0 overflow-hidden pointer-events-none select-none transition-all duration-500"
+        style={{
+          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.75)), url(${wallpaper})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      />
+    );
+  }
 
-  // Custom uploaded MP4/WebM video renderer
+  // Custom uploaded MP4/WebM live video background
   if (isCustomVideo) {
     return (
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 select-none">
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none select-none transition-all duration-500 bg-black">
         <video
           autoPlay
           loop
           muted
           playsInline
           src={wallpaper.replace('video:', '')}
-          className="w-full h-full object-cover opacity-65"
+          className="w-full h-full object-cover opacity-80"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/70 backdrop-blur-[0.5px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60 backdrop-blur-[0.5px]" />
       </div>
     );
   }
 
-  // Built-in Lightweight 60-120FPS Live Animated Canvas Video Wallpapers
-  return <CanvasVideoPreset mode={wallpaper} />;
+  // Built-in 60-120FPS Live Animated Canvas Video Wallpapers
+  if (isPresetVideo) {
+    return <CanvasVideoPreset mode={wallpaper} />;
+  }
+
+  return null;
 };
 
 interface CanvasVideoPresetProps {
@@ -274,8 +300,8 @@ const CanvasVideoPreset: React.FC<CanvasVideoPresetProps> = ({ mode }) => {
   }, [mode]);
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 select-none">
-      <canvas ref={canvasRef} className="w-full h-full block opacity-75" />
+    <div className="fixed inset-0 overflow-hidden pointer-events-none z-0 select-none">
+      <canvas ref={canvasRef} className="w-full h-full block opacity-85" />
     </div>
   );
 };

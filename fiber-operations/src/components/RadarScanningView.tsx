@@ -482,7 +482,7 @@ const RadarScanningViewComp: React.FC<RadarScanningViewProps> = ({
 
   return (
     <div className={`flex flex-col h-full w-full overflow-hidden select-none transition-colors duration-200 ${
-      isLightMode ? 'bg-[#f8fafc] text-slate-900' : 'bg-black text-slate-100'
+      isLightMode ? 'bg-[#f8fafc] text-slate-900' : 'bg-black/30 text-slate-100'
     }`}>
       {/* SCROLLABLE VIEW CONTAINER */}
       <div className="flex-1 overflow-y-auto px-3 pt-1 pb-28">

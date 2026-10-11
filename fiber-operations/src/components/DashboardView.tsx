@@ -35,7 +35,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     <div className={`flex flex-col h-full overflow-y-auto pb-32 select-none transition-colors duration-200 ${
       isLightMode
         ? 'bg-[#f4f2ef] text-neutral-900'
-        : 'bg-black text-neutral-100'
+        : 'bg-black/30 text-neutral-100'
     }`}>
       {/* Top Mobile Bar */}
       <div className={`sticky top-0 z-20 backdrop-blur-md px-5 pt-3 pb-3 border-b flex items-center justify-between ${
