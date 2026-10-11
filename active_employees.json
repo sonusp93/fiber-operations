@@ -1,5 +1,5 @@
 {
-  "version": "3.8.0",
+  "version": "3.9.0",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -96,10 +96,10 @@
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "3.8.0",
-    "build": "Build 380 (LocFinder Pro v3.8.0)",
-    "releaseNotes": "Official Live Major Release v3.8.0: Modern cyan glassmorphic settings UI and direct search results without popup suggestion boxes.",
+    "version": "3.9.0",
+    "build": "Build 390 (LocFinder Pro v3.9.0)",
+    "releaseNotes": "Official Live Release v3.9.0: Silent background OTA update checks (scans and triggers only when a new release is published) and clean Dashboard without search boxes.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.8.0/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.9.0/LocFinderPro.apk"
   }
 }

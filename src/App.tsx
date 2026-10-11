@@ -151,7 +151,6 @@ export default function App() {
     window.addEventListener('company_data_wipe_executed', handleWiped);
 
     const performStartupScan = async () => {
-      setStartupScanNotice('Scanning GitHub for OTA updates & active roster...');
       try {
         const scanRes = await CompanySecurityService.autoScanGitHubUpdatesAndSecurity(currentUser);
         if (!isMounted) return;
@@ -159,22 +158,18 @@ export default function App() {
         if (scanRes.wiped) {
           setIsDeviceWiped(true);
           setCurrentUser(null);
-          setStartupScanNotice(null);
           return;
         }
 
-        if (scanRes.updateAvailable && scanRes.updateInfo) {
+        const currentInstalledVer = CompanySecurityService.getCurrentInstalledVersion().version;
+        if (
+          scanRes.updateAvailable &&
+          scanRes.updateInfo &&
+          CompanySecurityService.isVersionNewer(currentInstalledVer, scanRes.updateInfo.version)
+        ) {
           setPendingMandatoryUpdate(scanRes.updateInfo);
-          setStartupScanNotice(`Mandatory Update Available: v${scanRes.updateInfo.version}`);
-        } else {
-          setStartupScanNotice('✓ GitHub Corporate Security Synced');
-          setTimeout(() => {
-            if (isMounted) setStartupScanNotice(null);
-          }, 3500);
         }
-      } catch {
-        if (isMounted) setStartupScanNotice(null);
-      }
+      } catch {}
     };
 
     performStartupScan();

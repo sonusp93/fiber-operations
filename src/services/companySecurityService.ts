@@ -152,13 +152,13 @@ export const DEFAULT_OFFICIAL_EMPLOYEES: CompanyEmployee[] = [
 
 // Current installed app version (LocFinder Pro Official Release)
 export const CURRENT_APP_VERSION = {
-  version: '3.8.0',
-  build: 'Build 380 (LocFinder Pro v3.8.0)'
+  version: '3.9.0',
+  build: 'Build 390 (LocFinder Pro v3.9.0)'
 };
 
 // Default corporate policy template pointing to company GitHub repository
 const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
-  version: '3.8.0',
+  version: '3.9.0',
   lastUpdated: new Date().toISOString(),
   globalWipeRevision: 1,
   revokedTechnicianIds: [],
@@ -167,12 +167,12 @@ const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
   githubRepoSource: 'https://raw.githubusercontent.com/sonusp93/fiber-operations/main/active_employees.json',
   activeEmployees: DEFAULT_OFFICIAL_EMPLOYEES,
   latestAppUpdate: {
-    version: '3.8.0',
-    build: 'Build 380 (Official GitHub Release)',
-    releaseNotes: 'Official Live Major Release v3.8.0: Modern cyan glassmorphic settings UI and direct search results without popup suggestion boxes.',
+    version: '3.9.0',
+    build: 'Build 390 (Official GitHub Release)',
+    releaseNotes: 'Official Live Release v3.9.0: Silent background OTA update checks (scans and triggers only when a new release is published) and clean Dashboard without search boxes.',
     isMandatory: true,
     publishedAt: new Date().toISOString(),
-    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v3.8.0/LocFinderPro.apk'
+    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v3.9.0/LocFinderPro.apk'
   }
 };
 
@@ -519,16 +519,16 @@ export class CompanySecurityService {
         localStorage.setItem(STORAGE_KEYS.LAST_SYNC, new Date().toISOString());
 
         const current = this.getCurrentInstalledVersion();
-        const hasNewUpdate = updateObj.version !== current.version;
+        const hasNewUpdate = this.isVersionNewer(current.version, updateObj.version);
 
         return {
           success: true,
           policy: mergedPolicy,
           employeesCount: employees.length,
           source: 'GitHub Raw Repository (Live Manifest)',
-          message: `Synchronized with GitHub: ${employees.length} field engineers verified, ${revokedIds.length} revoked IDs checked.`,
+          message: `Synchronized with GitHub: ${employees.length} field engineers verified.`,
           hasNewUpdate,
-          updateInfo: updateObj
+          updateInfo: hasNewUpdate ? updateObj : undefined
         };
       }
     } catch {
@@ -540,16 +540,16 @@ export class CompanySecurityService {
     const employees = this.getOfficialEmployees();
     const current = this.getCurrentInstalledVersion();
     const updateObj = cached.latestAppUpdate || DEFAULT_COMPANY_POLICY.latestAppUpdate!;
-    const hasNewUpdate = updateObj.version !== current.version;
+    const hasNewUpdate = this.isVersionNewer(current.version, updateObj.version);
 
     return {
       success: true,
       policy: cached,
       employeesCount: employees.length,
       source: 'Local Enterprise Cache (GitHub OTA Fallback)',
-      message: `Verified against cached company security policy (${cached.revokedTechnicianIds.length} revoked engineer records).`,
+      message: `Verified against cached company security policy.`,
       hasNewUpdate,
-      updateInfo: updateObj
+      updateInfo: hasNewUpdate ? updateObj : undefined
     };
   }
 
