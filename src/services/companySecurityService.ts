@@ -152,13 +152,13 @@ export const DEFAULT_OFFICIAL_EMPLOYEES: CompanyEmployee[] = [
 
 // Current installed app version (LocFinder Pro Official Release)
 export const CURRENT_APP_VERSION = {
-  version: '4.0.0',
-  build: 'Build 400 (LocFinder Pro v4.0.0)'
+  version: '4.1.0',
+  build: 'Build 410 (LocFinder Pro v4.1.0)'
 };
 
 // Default corporate policy template pointing to company GitHub repository
 const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
-  version: '4.0.0',
+  version: '4.1.0',
   lastUpdated: new Date().toISOString(),
   globalWipeRevision: 1,
   revokedTechnicianIds: [],
@@ -167,12 +167,12 @@ const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
   githubRepoSource: 'https://raw.githubusercontent.com/sonusp93/fiber-operations/main/active_employees.json',
   activeEmployees: DEFAULT_OFFICIAL_EMPLOYEES,
   latestAppUpdate: {
-    version: '4.0.0',
-    build: 'Build 400 (Official GitHub Release)',
-    releaseNotes: 'Official Live Major Release v4.0.0: Automatic unknown app installation permission handler for Android 8.0+, WebView cache purge on launch, and silent background OTA update checks.',
+    version: '4.1.0',
+    build: 'Build 410 (Official GitHub Release)',
+    releaseNotes: 'Official Live Major Release v4.1.0: Removed floating top search dropdown, optimized GPS power consumption to prevent phone heating, and removed repeating background update popup loops.',
     isMandatory: true,
     publishedAt: new Date().toISOString(),
-    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v4.0.0/LocFinderPro.apk'
+    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v4.1.0/LocFinderPro.apk'
   }
 };
 

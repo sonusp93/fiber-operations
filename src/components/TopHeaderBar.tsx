@@ -240,66 +240,6 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
                   </button>
                 )}
               </div>
-
-            {/* LIVE SEARCH AUTOCOMPLETE DROPDOWN (ENLARGED HIGH-VISIBILITY SEARCH RESULT BOX) */}
-            {isSearchActive && searchQuery.trim().length > 0 && (
-              <div className={`absolute top-11 sm:top-12 left-0 right-0 rounded-3xl border p-3.5 shadow-2xl z-[999] animate-in fade-in zoom-in-95 duration-150 ${
-                isLightMode 
-                  ? 'bg-white border-blue-200 text-slate-900 shadow-2xl ring-1 ring-slate-900/10'
-                  : 'bg-[#0b0e1a] border-cyan-500/40 text-white shadow-[0_25px_60px_rgba(0,0,0,0.98)] backdrop-blur-3xl ring-1 ring-cyan-500/30'
-              }`}>
-                <div className="flex items-center justify-between px-3 py-2 mb-2 border-b border-white/10 text-xs font-mono">
-                  <span className="font-extrabold text-cyan-400">SEARCH RESULTS ({liveMatches.length} MATCHES)</span>
-                  <span className="text-[11px] text-slate-400 font-bold">TAP TO OPEN TERMINAL</span>
-                </div>
-                <div className="space-y-2 max-h-[75vh] sm:max-h-96 overflow-y-auto no-scrollbar">
-                  {liveMatches.length > 0 ? (
-                    liveMatches.map((fat) => (
-                      <div
-                        key={fat.id}
-                        onClick={() => {
-                          onSearchChange(fat.fatId);
-                          if (onSelectFat) onSelectFat(fat);
-                          setIsSearchActive(false);
-                        }}
-                        className={`p-3 rounded-2xl cursor-pointer transition-all border flex items-center justify-between gap-3 active:scale-98 ${
-                          isLightMode 
-                            ? 'bg-slate-50 hover:bg-blue-50 border-slate-200 hover:border-blue-400 text-slate-800'
-                            : 'bg-white/[0.04] hover:bg-cyan-950/40 border-white/10 hover:border-cyan-400/50 text-white shadow-sm'
-                        }`}
-                      >
-                        <div className="min-w-0 flex-1">
-                          <div className="font-mono font-black text-xs sm:text-sm text-cyan-400 flex items-center gap-2 flex-wrap">
-                            <span>FAT {fat.fatId}</span>
-                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                              {fat.ponPort}
-                            </span>
-                          </div>
-                          <div className="text-xs truncate font-medium text-slate-300 mt-1">
-                            {fat.neAddress}
-                          </div>
-                          <div className="text-[11px] font-mono text-slate-400 truncate mt-0.5">
-                            {fat.locality} &middot; {fat.city}
-                          </div>
-                        </div>
-                        <div className="shrink-0 text-right font-mono">
-                          <span className="text-xs font-black text-amber-400 block px-2.5 py-1 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                            HUB {fat.hub}
-                          </span>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="p-6 text-center text-xs text-slate-400 space-y-1.5 font-mono">
-                      <div className="text-sm font-bold text-slate-300">No nodes found matching &ldquo;<span className="text-cyan-400 font-bold">{searchQuery}</span>&rdquo;</div>
-                      <div className="text-xs text-slate-500">
-                        Try searching by FAT ID (e.g. 08N07), PON Port, HUB, RSU or Locality
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
           </div>
           )}
 

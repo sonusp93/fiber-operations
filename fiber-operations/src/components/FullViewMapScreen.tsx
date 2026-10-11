@@ -432,7 +432,7 @@ export const FullViewMapScreen: React.FC<FullViewMapScreenProps> = ({
         () => {
           setIsRealGpsActive(false);
         },
-        { enableHighAccuracy: true, timeout: 12000, maximumAge: 3000 }
+        { enableHighAccuracy: false, timeout: 20000, maximumAge: 30000 }
       );
     } catch {
       // Ignore

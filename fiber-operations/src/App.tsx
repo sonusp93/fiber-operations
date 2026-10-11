@@ -174,23 +174,8 @@ export default function App() {
 
     performStartupScan();
 
-    // Background interval check every 3 minutes for automatic revocation & update detection
-    const interval = setInterval(async () => {
-      if (!currentUser) return;
-      try {
-        const scanRes = await CompanySecurityService.autoScanGitHubUpdatesAndSecurity(currentUser);
-        if (scanRes.wiped) {
-          setIsDeviceWiped(true);
-          setCurrentUser(null);
-        } else if (scanRes.updateAvailable && scanRes.updateInfo) {
-          setPendingMandatoryUpdate(scanRes.updateInfo);
-        }
-      } catch {}
-    }, 180000);
-
     return () => {
       isMounted = false;
-      clearInterval(interval);
       window.removeEventListener('company_data_wipe_executed', handleWiped);
     };
   }, [currentUser]);
