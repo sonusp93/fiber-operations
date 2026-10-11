@@ -1,14 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { 
   Download, 
-  ShieldAlert, 
-  Lock, 
-  RefreshCw, 
-  CheckCircle2, 
+  Lock,
+  CheckCircle2,
   AlertTriangle,
-  Radio,
-  FileCode,
-  ShieldCheck
+  ShieldCheck,
+  ExternalLink
 } from 'lucide-react';
 import { CompanySecurityService, AppOtaUpdateInfo, UserAuthProfile } from '../services/companySecurityService';
 
@@ -27,78 +24,32 @@ export const MandatoryOtaUpdateModal: React.FC<MandatoryOtaUpdateModalProps> = (
   onRevocationDetected,
   isLightMode = false
 }) => {
-  const [installProgress, setInstallProgress] = useState(0);
-  const [installStageText, setInstallStageText] = useState('Initiating mandatory OTA security update...');
-  const [isCompleted, setIsCompleted] = useState(false);
-  const [isVerifyingRoster, setIsVerifyingRoster] = useState(false);
-  const animFrameRef = useRef<number | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
-  useEffect(() => {
-    // Automatic installation starts immediately - Employee CANNOT cancel or ignore!
-    const startTime = performance.now();
-    const duration = 2800; // 2.8 seconds realistic progress
+  const handleDownloadAndInstall = () => {
+    setIsDownloading(true);
+    // Mark version installed in localStorage
+    CompanySecurityService.setInstalledVersion(updateInfo.version, updateInfo.build);
 
-    const stepProgress = (now: number) => {
-      const elapsed = now - startTime;
-      const pct = Math.min(Math.round((elapsed / duration) * 100), 100);
-      setInstallProgress(pct);
+    // Launch direct download URL in Android system / browser package installer
+    const downloadUrl = updateInfo.downloadUrl || `https://github.com/sonusp93/fiber-operations/releases/download/v${updateInfo.version}/LocFinderPro.apk`;
 
-      if (pct < 25) {
-        setInstallStageText('Verifying corporate GitHub repository signature & keys...');
-      } else if (pct < 55) {
-        setInstallStageText('Scanning active employee roster & separation status...');
-      } else if (pct < 85) {
-        setInstallStageText('Patching offline FAT database & RTK optical positioning engine...');
-      } else if (pct < 100) {
-        setInstallStageText('Writing validated firmware package v' + updateInfo.version + '...');
-      } else {
-        setInstallStageText('✓ OTA Update Complete · Performing final security compliance check...');
+    try {
+      if (typeof window !== 'undefined') {
+        window.location.href = downloadUrl;
       }
+    } catch {
+      window.open(downloadUrl, '_system');
+    }
 
-      if (elapsed < duration) {
-        animFrameRef.current = requestAnimationFrame(stepProgress);
-      } else {
-        setInstallProgress(100);
-        setIsVerifyingRoster(true);
-
-        // Security check for resigned employee
-        setTimeout(() => {
-          if (currentUser) {
-            const check = CompanySecurityService.isTechnicianRevoked(currentUser);
-            if (check.isRevoked) {
-              CompanySecurityService.executeCompanyDataWipe(
-                'Resigned employee separation detected during mandatory OTA update',
-                currentUser
-              );
-              onRevocationDetected();
-              return;
-            }
-          }
-
-          // Mark installed
-          CompanySecurityService.setInstalledVersion(updateInfo.version, updateInfo.build);
-          setIsCompleted(true);
-
-          setTimeout(() => {
-            onUpdateCompleted();
-          }, 1000);
-        }, 600);
-      }
-    };
-
-    animFrameRef.current = requestAnimationFrame(stepProgress);
-
-    return () => {
-      if (animFrameRef.current) {
-        cancelAnimationFrame(animFrameRef.current);
-      }
-    };
-  }, [updateInfo, currentUser, onUpdateCompleted, onRevocationDetected]);
+    setTimeout(() => {
+      onUpdateCompleted();
+    }, 2000);
+  };
 
   return (
     <div 
       className="fixed inset-0 z-[9998] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 select-none animate-in fade-in duration-200"
-      // Non-dismissible: Clicking backdrop does NOTHING. Esc does NOTHING.
       onClick={(e) => e.stopPropagation()}
     >
       <div className={`w-full max-w-lg p-6 sm:p-7 rounded-[32px] border shadow-2xl relative overflow-hidden space-y-5 transition-all ${
@@ -132,7 +83,7 @@ export const MandatoryOtaUpdateModal: React.FC<MandatoryOtaUpdateModalProps> = (
           </div>
         </div>
 
-        {/* Corporate Policy Notice: Explaining Why This Cannot Be Cancelled */}
+        {/* Corporate Policy Notice */}
         <div className="p-3.5 rounded-2xl bg-black/40 border border-white/10 space-y-2 text-xs relative z-10">
           <div className="flex items-center gap-2 text-cyan-400 font-mono font-bold text-[11px]">
             <ShieldCheck className="w-4 h-4 shrink-0" />
@@ -144,79 +95,29 @@ export const MandatoryOtaUpdateModal: React.FC<MandatoryOtaUpdateModalProps> = (
           <div className="pt-1 border-t border-white/5 flex items-start gap-2 text-[10.5px] text-amber-300 font-mono">
             <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400 mt-0.5" />
             <span>
-              <strong>Resigned Employee Protection:</strong> This update cannot be ignored or cancelled. If an employee has resigned, the GitHub manifest auto-wipes company data from this app (your personal phone and private data remain completely untouched).
+              <strong>Mandatory Firmware Upgrade:</strong> Tap the button below to download and install the official v{updateInfo.version} APK update file directly.
             </span>
           </div>
         </div>
 
-        {/* Live Installation Progress Bar */}
+        {/* Action Button: Download & Install APK Update */}
         <div className="space-y-2 relative z-10 pt-1">
-          <div className="flex items-center justify-between text-xs font-mono">
-            <span className={`font-bold flex items-center gap-1.5 ${
-              isCompleted ? 'text-emerald-400' : 'text-cyan-400'
-            }`}>
-              {isCompleted ? (
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              ) : (
-                <RefreshCw className="w-3.5 h-3.5 animate-spin text-cyan-400" />
-              )}
-              <span className="truncate">{installStageText}</span>
-            </span>
-            <span className={`font-black text-sm ml-2 ${
-              isCompleted ? 'text-emerald-300' : 'text-cyan-300'
-            }`}>
-              {installProgress}%
-            </span>
-          </div>
-
-          <div className="w-full h-3 rounded-full bg-black/80 border border-cyan-500/30 overflow-hidden p-0.5">
-            <div 
-              className={`h-full rounded-full transition-all duration-150 ease-out ${
-                isCompleted 
-                  ? 'bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_15px_rgba(16,185,129,0.5)]'
-                  : 'bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 shadow-[0_0_12px_rgba(6,182,212,0.5)]'
-              }`}
-              style={{ width: `${installProgress}%` }}
-            />
-          </div>
-        </div>
-
-        {/* Release Notes & New Features List */}
-        <div className="p-3.5 rounded-2xl bg-cyan-950/30 border border-cyan-500/30 space-y-2 text-xs relative z-10">
-          <div className="flex items-center gap-2 text-cyan-300 font-mono font-bold text-[11px] uppercase tracking-wider">
-            <ShieldCheck className="w-4 h-4 text-cyan-400" />
-            <span>New Features in Version {updateInfo.version}</span>
-          </div>
-          <ul className="space-y-1.5 text-[11px] text-slate-200 font-mono">
-            <li className="flex items-start gap-2">
-              <span className="text-cyan-400 font-bold shrink-0">✓</span>
-              <span><strong>Strict 1-Device Hardware Binding:</strong> Each Employee ID is locked to 1 phone globally via GitHub API. Same phone cannot switch between free IDs.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-cyan-400 font-bold shrink-0">✓</span>
-              <span><strong>120 FPS Paginated Radar:</strong> Super-smooth scanning for 2000+ FAT nodes with instant (+50) node loading to prevent freezing.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-cyan-400 font-bold shrink-0">✓</span>
-              <span><strong>Specialized PON Telemetry View:</strong> Dedicated PON Trunk & Splitter cards with GPON Class C+ 1490/1310nm laser specs and ONU counts.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-cyan-400 font-bold shrink-0">✓</span>
-              <span><strong>Native Android Back Gesture:</strong> Integrated `@capacitor/app` native listener to cleanly minimize app on Home tab.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-cyan-400 font-bold shrink-0">✓</span>
-              <span><strong>Battery &amp; Thermal Protection:</strong> Throttled GPS sensor polling to prevent phone heating and battery drain.</span>
-            </li>
-          </ul>
+          <button
+            onClick={handleDownloadAndInstall}
+            className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 hover:from-cyan-300 hover:to-indigo-500 text-slate-950 font-black text-sm font-mono flex items-center justify-center gap-2 shadow-xl shadow-cyan-500/30 cursor-pointer active:scale-95 transition-all"
+          >
+            <Download className="w-5 h-5 stroke-[2.5]" />
+            <span>{isDownloading ? 'Downloading v' + updateInfo.version + ' APK...' : 'Download & Install v' + updateInfo.version + ' APK Update'}</span>
+            <ExternalLink className="w-4 h-4 text-slate-900" />
+          </button>
         </div>
 
         {/* Release Notes Summary */}
-        <div className="p-3 rounded-xl bg-white/[0.04] border border-white/10 text-[11px] font-mono space-y-1 text-slate-300 relative z-10">
-          <div className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+        <div className="p-3.5 rounded-2xl bg-cyan-950/30 border border-cyan-500/30 space-y-1.5 text-xs relative z-10">
+          <div className="text-cyan-300 font-mono font-bold text-[10px] uppercase tracking-wider">
             Changelog &middot; {updateInfo.build}
           </div>
-          <p>{updateInfo.releaseNotes}</p>
+          <p className="text-[11px] font-mono text-slate-200">{updateInfo.releaseNotes}</p>
         </div>
 
         {/* Lockout Warning */}
