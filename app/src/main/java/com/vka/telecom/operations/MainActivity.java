@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.webkit.DownloadListener;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.widget.Toast;
 import androidx.core.content.ContextCompat;
@@ -25,6 +26,24 @@ public class MainActivity extends BridgeActivity {
 
     private long downloadId = -1;
     private BroadcastReceiver downloadReceiver;
+
+    public class AndroidInstallerInterface {
+        Context mContext;
+
+        AndroidInstallerInterface(Context c) {
+            mContext = c;
+        }
+
+        @JavascriptInterface
+        public void downloadAndInstallApk(final String url) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    startApkDownload(url);
+                }
+            });
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +82,8 @@ public class MainActivity extends BridgeActivity {
             WebView webView = getBridge().getWebView();
             if (webView != null) {
                 webView.clearCache(true);
+                // Expose AndroidInstaller Javascript Interface for 100% In-App OTA Update
+                webView.addJavascriptInterface(new AndroidInstallerInterface(this), "AndroidInstaller");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,13 +99,6 @@ public class MainActivity extends BridgeActivity {
                     public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
                         if (url != null && (url.endsWith(".apk") || url.contains("/releases/download/") || mimetype.contains("vnd.android.package-archive"))) {
                             startApkDownload(url);
-                        } else if (url != null) {
-                            try {
-                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                                startActivity(browserIntent);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
                         }
                     }
                 });
@@ -106,7 +120,7 @@ public class MainActivity extends BridgeActivity {
                 }
             }
 
-            Toast.makeText(this, "Downloading LocFinder Pro OTA update...", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Downloading LocFinder Pro update in-app...", Toast.LENGTH_LONG).show();
 
             DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
             if (downloadManager == null) return;
@@ -126,13 +140,7 @@ public class MainActivity extends BridgeActivity {
             downloadId = downloadManager.enqueue(request);
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, "Starting browser download for update...", Toast.LENGTH_LONG).show();
-            try {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                startActivity(browserIntent);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            Toast.makeText(this, "Failed to start in-app download: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -154,10 +162,7 @@ public class MainActivity extends BridgeActivity {
             }
 
             if (!destinationFile.exists()) {
-                Toast.makeText(context, "Opening direct GitHub download...", Toast.LENGTH_SHORT).show();
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sonusp93/fiber-operations/releases/download/v5.0.0/LocFinderPro.apk"));
-                browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(browserIntent);
+                Toast.makeText(context, "Update file not found. Retrying...", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -173,18 +178,11 @@ public class MainActivity extends BridgeActivity {
                 context.grantUriPermission(packageName, apkUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             }
 
-            Toast.makeText(context, "Opening package installer for LocFinder Pro...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Opening in-app package installer...", Toast.LENGTH_SHORT).show();
             context.startActivity(installIntent);
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(context, "Opening browser download link...", Toast.LENGTH_LONG).show();
-            try {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sonusp93/fiber-operations/releases/download/v5.0.0/LocFinderPro.apk"));
-                browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(browserIntent);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            Toast.makeText(context, "Error launching package installer: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 

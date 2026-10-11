@@ -142,14 +142,19 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   };
 
   const handleInstallUpdate = () => {
-    if (availableUpdate && onTriggerOtaUpdate) {
-      onTriggerOtaUpdate({
-        version: availableUpdate.version.replace(/^v/, ''),
-        build: availableUpdate.build,
-        releaseNotes: availableUpdate.releaseNotes,
-        isMandatory: true,
-        downloadUrl: availableUpdate.downloadUrl || 'https://github.com/sonusp93/fiber-operations/releases/download/v3.6.0/LocFinderPro.apk'
-      });
+    if (availableUpdate) {
+      const url = availableUpdate.downloadUrl || `https://github.com/sonusp93/fiber-operations/releases/download/${availableUpdate.version}/LocFinderPro.apk`;
+      if (typeof window !== 'undefined' && (window as any).AndroidInstaller && (window as any).AndroidInstaller.downloadAndInstallApk) {
+        (window as any).AndroidInstaller.downloadAndInstallApk(url);
+      } else if (onTriggerOtaUpdate) {
+        onTriggerOtaUpdate({
+          version: availableUpdate.version.replace(/^v/, ''),
+          build: availableUpdate.build,
+          releaseNotes: availableUpdate.releaseNotes,
+          isMandatory: true,
+          downloadUrl: url
+        });
+      }
       onClose();
     }
   };

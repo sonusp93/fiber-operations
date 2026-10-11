@@ -31,15 +31,17 @@ export const MandatoryOtaUpdateModal: React.FC<MandatoryOtaUpdateModalProps> = (
     // Mark version installed in localStorage
     CompanySecurityService.setInstalledVersion(updateInfo.version, updateInfo.build);
 
-    // Launch direct download URL in Android system / browser package installer
+    // Launch in-app AndroidInstaller JS interface or direct download
     const downloadUrl = updateInfo.downloadUrl || `https://github.com/sonusp93/fiber-operations/releases/download/v${updateInfo.version}/LocFinderPro.apk`;
 
-    try {
-      if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && (window as any).AndroidInstaller && (window as any).AndroidInstaller.downloadAndInstallApk) {
+      (window as any).AndroidInstaller.downloadAndInstallApk(downloadUrl);
+    } else {
+      try {
         window.location.href = downloadUrl;
+      } catch {
+        window.open(downloadUrl, '_self');
       }
-    } catch {
-      window.open(downloadUrl, '_system');
     }
 
     setTimeout(() => {
