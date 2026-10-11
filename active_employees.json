@@ -1,5 +1,5 @@
 {
-  "version": "3.9.0",
+  "version": "4.0.0",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -96,10 +96,10 @@
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "3.9.0",
-    "build": "Build 390 (LocFinder Pro v3.9.0)",
-    "releaseNotes": "Official Live Release v3.9.0: Silent background OTA update checks (scans and triggers only when a new release is published) and clean Dashboard without search boxes.",
+    "version": "4.0.0",
+    "build": "Build 400 (LocFinder Pro v4.0.0)",
+    "releaseNotes": "Official Live Release v4.0.0: Automatic unknown app installation permission handler for Android 8.0+, WebView cache purge on launch, and silent background OTA update checks.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v3.9.0/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v4.0.0/LocFinderPro.apk"
   }
 }

@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.webkit.DownloadListener;
 import android.webkit.WebView;
 import android.widget.Toast;
@@ -52,6 +54,16 @@ public class MainActivity extends BridgeActivity {
     public void onStart() {
         super.onStart();
         setupApkDownloadListener();
+
+        // Clear web cache to ensure freshly compiled JS bundle executes
+        try {
+            WebView webView = getBridge().getWebView();
+            if (webView != null) {
+                webView.clearCache(true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void setupApkDownloadListener() {
@@ -81,6 +93,16 @@ public class MainActivity extends BridgeActivity {
 
     private void startApkDownload(String url) {
         try {
+            // Check Android 8.0+ Unknown App Installation Permission
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (!getPackageManager().canRequestPackageInstalls()) {
+                    Toast.makeText(this, "Please allow 'Install unknown apps' permission to update LocFinder Pro", Toast.LENGTH_LONG).show();
+                    Intent settingsIntent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:" + getPackageName()));
+                    startActivity(settingsIntent);
+                    return;
+                }
+            }
+
             Toast.makeText(this, "Downloading LocFinder Pro OTA update...", Toast.LENGTH_LONG).show();
 
             DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
@@ -101,7 +123,7 @@ public class MainActivity extends BridgeActivity {
             downloadId = downloadManager.enqueue(request);
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, "Failed to start download: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Starting browser download for update...", Toast.LENGTH_LONG).show();
             try {
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 startActivity(browserIntent);
@@ -113,6 +135,16 @@ public class MainActivity extends BridgeActivity {
 
     private void installDownloadedApk(Context context) {
         try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (!getPackageManager().canRequestPackageInstalls()) {
+                    Toast.makeText(context, "Please allow 'Install unknown apps' permission to update LocFinder Pro", Toast.LENGTH_LONG).show();
+                    Intent settingsIntent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:" + getPackageName()));
+                    settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(settingsIntent);
+                    return;
+                }
+            }
+
             File destinationFile = new File(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "LocFinderPro_Update.apk");
             if (!destinationFile.exists()) return;
 
@@ -123,11 +155,11 @@ public class MainActivity extends BridgeActivity {
             installIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-            Toast.makeText(context, "Opening package installer...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Opening package installer for LocFinder Pro...", Toast.LENGTH_SHORT).show();
             context.startActivity(installIntent);
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(context, "Please grant 'Install unknown apps' permission if prompted.", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Error launching package installer: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
