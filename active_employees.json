@@ -1,5 +1,5 @@
 {
-  "version": "5.1.0",
+  "version": "6.0.0",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -96,10 +96,10 @@
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "5.1.0",
-    "build": "Build 510 (LocFinder Pro v5.1.0)",
-    "releaseNotes": "Official Live Major Release v5.1.0: Added animated entrance popup modals with heavy background blur for FAT, HUB, RSU, and PON Port views.",
+    "version": "6.0.0",
+    "build": "Build 600 (LocFinder Pro v6.0.0)",
+    "releaseNotes": "Official Live Major Release v6.0.0: Instant in-app live OTA hot-patching engine, synchronized local storage version state, and public storage package installer URI grants.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v5.1.0/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v6.0.0/LocFinderPro.apk"
   }
 }

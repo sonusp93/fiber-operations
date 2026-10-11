@@ -152,13 +152,13 @@ export const DEFAULT_OFFICIAL_EMPLOYEES: CompanyEmployee[] = [
 
 // Current installed app version (LocFinder Pro Official Release)
 export const CURRENT_APP_VERSION = {
-  version: '5.1.0',
-  build: 'Build 510 (LocFinder Pro v5.1.0)'
+  version: '6.0.0',
+  build: 'Build 600 (LocFinder Pro v6.0.0)'
 };
 
 // Default corporate policy template pointing to company GitHub repository
 const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
-  version: '5.1.0',
+  version: '6.0.0',
   lastUpdated: new Date().toISOString(),
   globalWipeRevision: 1,
   revokedTechnicianIds: [],
@@ -167,12 +167,12 @@ const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
   githubRepoSource: 'https://raw.githubusercontent.com/sonusp93/fiber-operations/main/active_employees.json',
   activeEmployees: DEFAULT_OFFICIAL_EMPLOYEES,
   latestAppUpdate: {
-    version: '5.1.0',
-    build: 'Build 510 (Official GitHub Release)',
-    releaseNotes: 'Official Live Major Release v5.1.0: Added animated entrance popup modals with heavy background blur for FAT, HUB, RSU, and PON Port views.',
+    version: '6.0.0',
+    build: 'Build 600 (Official GitHub Release)',
+    releaseNotes: 'Official Live Major Release v6.0.0: Instant in-app live OTA hot-patching engine, synchronized local storage version state, and public storage package installer URI grants.',
     isMandatory: true,
     publishedAt: new Date().toISOString(),
-    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v5.1.0/LocFinderPro.apk'
+    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v6.0.0/LocFinderPro.apk'
   }
 };
 
@@ -269,6 +269,20 @@ export class CompanySecurityService {
    * Get current installed app version (Returns the version of compiled binary executing right now)
    */
   static getCurrentInstalledVersion(): { version: string; build: string } {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.INSTALLED_VERSION);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && parsed.version) {
+          // Compare rank between stored in localStorage vs compiled CURRENT_APP_VERSION
+          if (this.parseVersionRank(parsed.version) > this.parseVersionRank(CURRENT_APP_VERSION.version)) {
+            return parsed;
+          }
+        }
+      }
+    } catch {}
+    // If compiled version is equal or higher, keep localStorage in sync
+    localStorage.setItem(STORAGE_KEYS.INSTALLED_VERSION, JSON.stringify(CURRENT_APP_VERSION));
     return CURRENT_APP_VERSION;
   }
 
