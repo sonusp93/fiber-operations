@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import com.getcapacitor.BridgeActivity;
 import java.io.File;
+import java.util.List;
 
 public class MainActivity extends BridgeActivity {
 
@@ -146,20 +149,42 @@ public class MainActivity extends BridgeActivity {
             }
 
             File destinationFile = new File(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "LocFinderPro_Update.apk");
-            if (!destinationFile.exists()) return;
+            if (!destinationFile.exists()) {
+                destinationFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "LocFinderPro_Update.apk");
+            }
 
-            Intent installIntent = new Intent(Intent.ACTION_VIEW);
+            if (!destinationFile.exists()) {
+                Toast.makeText(context, "Opening direct GitHub download...", Toast.LENGTH_SHORT).show();
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sonusp93/fiber-operations/releases/download/v5.0.0/LocFinderPro.apk"));
+                browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(browserIntent);
+                return;
+            }
+
             Uri apkUri = FileProvider.getUriForFile(context, getPackageName() + ".fileprovider", destinationFile);
 
+            Intent installIntent = new Intent(Intent.ACTION_VIEW);
             installIntent.setDataAndType(apkUri, "application/vnd.android.package-archive");
-            installIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+            List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(installIntent, PackageManager.MATCH_DEFAULT_ONLY);
+            for (ResolveInfo resolveInfo : resInfoList) {
+                String packageName = resolveInfo.activityInfo.packageName;
+                context.grantUriPermission(packageName, apkUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            }
 
             Toast.makeText(context, "Opening package installer for LocFinder Pro...", Toast.LENGTH_SHORT).show();
             context.startActivity(installIntent);
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(context, "Error launching package installer: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Opening browser download link...", Toast.LENGTH_LONG).show();
+            try {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sonusp93/fiber-operations/releases/download/v5.0.0/LocFinderPro.apk"));
+                browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(browserIntent);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 

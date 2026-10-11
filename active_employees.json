@@ -1,5 +1,5 @@
 {
-  "version": "4.1.0",
+  "version": "5.0.0",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -96,10 +96,10 @@
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "4.1.0",
-    "build": "Build 410 (LocFinder Pro v4.1.0)",
-    "releaseNotes": "Official Live Release v4.1.0: Removed floating top search dropdown, optimized GPS power consumption to prevent phone heating, and removed repeating background update popup loops.",
+    "version": "5.0.0",
+    "build": "Build 500 (LocFinder Pro v5.0.0)",
+    "releaseNotes": "Official Live Major Release v5.0.0: Public storage package installer URI permissions fix, automatic Android 8.0+ installer launcher, and complete version synchronization.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v4.1.0/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v5.0.0/LocFinderPro.apk"
   }
 }
