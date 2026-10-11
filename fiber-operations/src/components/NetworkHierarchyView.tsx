@@ -335,8 +335,8 @@ const NetworkHierarchyViewComp: React.FC<NetworkHierarchyViewProps> = ({
                                       </span>
                                     </div>
 
-                                    <div className="text-[10.5px] font-mono font-bold text-amber-400">
-                                      -18.5 dBm &middot; {fat.totalCap} Active ONUs
+                                    <div className="text-[10.5px] font-mono font-bold text-cyan-400">
+                                      {fat.totalCap} Ports &middot; {fat.ponPort}
                                     </div>
                                   </div>
 

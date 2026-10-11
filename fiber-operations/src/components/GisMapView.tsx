@@ -436,9 +436,9 @@ export const GisMapView: React.FC<GisMapViewProps> = ({
 
             <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-white/5 text-center">
               <div className="bg-neutral-800/40 p-1.5 rounded-lg">
-                <div className="text-[10px] text-neutral-400">Power</div>
+                <div className="text-[10px] text-neutral-400 font-medium">PON Feeder</div>
                 <div className="text-xs font-mono font-bold text-cyan-400">
-                  {activeInspectNode.opticalPowerDbm} dBm
+                  {activeInspectNode.ponPort}
                 </div>
               </div>
               <div className="bg-neutral-800/40 p-1.5 rounded-lg">

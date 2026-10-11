@@ -27,7 +27,7 @@ const Sparkles = LucideSparkles || ((props: any) => (
     <path d="M5 18H3" />
   </svg>
 ));
-import { FAT_DATASET, FatRecord, HUB_DATASET, RSU_DATASET } from '../data/telecomDataset';
+import { FAT_DATASET, FatRecord, HUB_DATASET, RSU_DATASET, calculateGpsDistanceMeters } from '../data/telecomDataset';
 import { Fat3DModelIcon, Hub3DModelIcon, Rsu3DModelIcon } from './ModelIcons';
 
 interface RadarScanningViewProps {
@@ -106,10 +106,10 @@ const computeNodesForGps = (gpsLat: number, gpsLng: number, radiusKm: number): P
       Math.abs(fat.fatLat - gpsLat) <= latDelta &&
       Math.abs(fat.fatLog - gpsLng) <= lngDelta
     ) {
-      const distKm = calculateDistanceKm(gpsLat, gpsLng, fat.fatLat, fat.fatLog);
+      const distMeters = calculateGpsDistanceMeters(gpsLat, gpsLng, fat.fatLat, fat.fatLog);
+      const distKm = distMeters / 1000;
       if (distKm <= radiusKm) {
         const bearing = calculateBearing(gpsLat, gpsLng, fat.fatLat, fat.fatLog);
-        const estimatedLoss = -(16.5 + distKm * 1.8 + (fat.totalCap === 16 ? 3.2 : 0)).toFixed(1);
 
         list.push({
           id: fat.id,
@@ -120,12 +120,12 @@ const computeNodesForGps = (gpsLat: number, gpsLng: number, radiusKm: number): P
           city: fat.city,
           lat: fat.fatLat,
           lng: fat.fatLog,
-          distanceMeters: Math.round(distKm * 1000),
-          distanceKm: distKm < 1 ? `${Math.round(distKm * 1000)} m` : `${distKm.toFixed(2)} km`,
+          distanceMeters: distMeters,
+          distanceKm: distMeters < 1000 ? `${distMeters} m` : `${distKm.toFixed(2)} km`,
           bearingDeg: bearing.deg,
           bearingCardinal: bearing.cardinal,
-          opticalLossDbm: `${estimatedLoss} dBm`,
-          extraInfo: `${fat.ponPort} · ${fat.totalCap} Ports · HUB ${fat.hub}`,
+          opticalLossDbm: `${fat.totalCap} Ports`,
+          extraInfo: `${fat.ponPort} · HUB ${fat.hub}`,
           rawFat: fat
         });
       }
@@ -134,7 +134,8 @@ const computeNodesForGps = (gpsLat: number, gpsLng: number, radiusKm: number): P
 
   // 2. Process HUBs
   HUB_DATASET.forEach((hub) => {
-    const distKm = calculateDistanceKm(gpsLat, gpsLng, hub.lat, hub.lng);
+    const distMeters = calculateGpsDistanceMeters(gpsLat, gpsLng, hub.lat, hub.lng);
+    const distKm = distMeters / 1000;
     if (distKm <= radiusKm) {
       const bearing = calculateBearing(gpsLat, gpsLng, hub.lat, hub.lng);
       list.push({
@@ -146,11 +147,11 @@ const computeNodesForGps = (gpsLat: number, gpsLng: number, radiusKm: number): P
         city: hub.city,
         lat: hub.lat,
         lng: hub.lng,
-        distanceMeters: Math.round(distKm * 1000),
-        distanceKm: distKm < 1 ? `${Math.round(distKm * 1000)} m` : `${distKm.toFixed(2)} km`,
+        distanceMeters: distMeters,
+        distanceKm: distMeters < 1000 ? `${distMeters} m` : `${distKm.toFixed(2)} km`,
         bearingDeg: bearing.deg,
         bearingCardinal: bearing.cardinal,
-        opticalLossDbm: '-12.8 dBm (Trunk)',
+        opticalLossDbm: `${hub.fats.length} FATs`,
         extraInfo: `RSU ${hub.rsu} · Optical Core Aggregator`,
         rawHub: hub
       });
@@ -159,7 +160,8 @@ const computeNodesForGps = (gpsLat: number, gpsLng: number, radiusKm: number): P
 
   // 3. Process RSUs
   RSU_DATASET.forEach((rsu) => {
-    const distKm = calculateDistanceKm(gpsLat, gpsLng, rsu.lat, rsu.lng);
+    const distMeters = calculateGpsDistanceMeters(gpsLat, gpsLng, rsu.lat, rsu.lng);
+    const distKm = distMeters / 1000;
     if (distKm <= radiusKm) {
       const bearing = calculateBearing(gpsLat, gpsLng, rsu.lat, rsu.lng);
       list.push({
@@ -171,11 +173,11 @@ const computeNodesForGps = (gpsLat: number, gpsLng: number, radiusKm: number): P
         city: rsu.city,
         lat: rsu.lat,
         lng: rsu.lng,
-        distanceMeters: Math.round(distKm * 1000),
-        distanceKm: distKm < 1 ? `${Math.round(distKm * 1000)} m` : `${distKm.toFixed(2)} km`,
+        distanceMeters: distMeters,
+        distanceKm: distMeters < 1000 ? `${distMeters} m` : `${distKm.toFixed(2)} km`,
         bearingDeg: bearing.deg,
         bearingCardinal: bearing.cardinal,
-        opticalLossDbm: '-9.4 dBm (Central OLT)',
+        opticalLossDbm: `${rsu.hubCount} HUBs`,
         extraInfo: `Carrier OLT · Substation Switch`,
         rawRsu: rsu
       });
@@ -886,11 +888,11 @@ const RadarScanningViewComp: React.FC<RadarScanningViewProps> = ({
                           </div>
                         </div>
 
-                        {/* Power Loss */}
+                        {/* Node Type Badge */}
                         <div className="text-right shrink-0">
-                          <span className="text-[9.5px] sm:text-[10px] font-mono text-slate-400 block">Est. Power</span>
-                          <span className="text-xs sm:text-sm font-mono font-black text-emerald-400">
-                            {node.opticalLossDbm}
+                          <span className="text-[9.5px] sm:text-[10px] font-mono text-slate-400 block">Node Type</span>
+                          <span className="text-xs font-mono font-bold text-cyan-400 px-2 py-0.5 rounded-lg bg-cyan-950/60 border border-cyan-500/30">
+                            {node.type}
                           </span>
                         </div>
                       </div>

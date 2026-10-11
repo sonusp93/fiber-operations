@@ -1,5 +1,5 @@
 {
-  "version": "7.0.0",
+  "version": "7.1.0",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -96,10 +96,10 @@
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "7.0.0",
-    "build": "Build 700 (LocFinder Pro v7.0.0)",
-    "releaseNotes": "Official Live Major Release v7.0.0: Native JavascriptInterface in-app APK downloader and package installer bridge (no external browser redirection).",
+    "version": "7.1.0",
+    "build": "Build 710 (LocFinder Pro v7.1.0)",
+    "releaseNotes": "Official Live Release v7.1.0: Standardized GPS distance calculation engine and removed dummy optical power dBm fields.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v7.0.0/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v7.1.0/LocFinderPro.apk"
   }
 }

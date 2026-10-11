@@ -92,9 +92,9 @@ export const FatDetailsView: React.FC<FatDetailsViewProps> = ({
         {/* Diagnostic Quick Bar */}
         <div className="grid grid-cols-3 gap-2.5 p-3 rounded-2xl bg-neutral-900/80 border border-white/5">
           <div className="text-center p-2 rounded-xl bg-neutral-800/40">
-            <div className="text-[10px] text-neutral-400 font-medium">Optical Power</div>
+            <div className="text-[10px] text-neutral-400 font-medium">PON Port</div>
             <div className="text-sm font-mono font-bold text-cyan-400 mt-0.5">
-              {fat.opticalPowerDbm} dBm
+              {fat.ponPort}
             </div>
           </div>
           <div className="text-center p-2 rounded-xl bg-neutral-800/40">
