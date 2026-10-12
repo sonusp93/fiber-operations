@@ -152,13 +152,13 @@ export const DEFAULT_OFFICIAL_EMPLOYEES: CompanyEmployee[] = [
 
 // Current installed app version (LocFinder Pro Official Release)
 export const CURRENT_APP_VERSION = {
-  version: '8.0.0',
-  build: 'Build 800 (LocFinder Pro v8.0.0)'
+  version: '8.1.0',
+  build: 'Build 810 (LocFinder Pro v8.1.0)'
 };
 
 // Default corporate policy template pointing to company GitHub repository
 const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
-  version: '8.0.0',
+  version: '8.1.0',
   lastUpdated: new Date().toISOString(),
   globalWipeRevision: 1,
   revokedTechnicianIds: [],
@@ -167,12 +167,12 @@ const DEFAULT_COMPANY_POLICY: CompanyRevocationPolicy = {
   githubRepoSource: 'https://raw.githubusercontent.com/sonusp93/fiber-operations/main/active_employees.json',
   activeEmployees: DEFAULT_OFFICIAL_EMPLOYEES,
   latestAppUpdate: {
-    version: '8.0.0',
-    build: 'Build 800 (Official GitHub Release)',
-    releaseNotes: 'Official Live Major Release v8.0.0: Full-screen custom image & live video wallpapers rendering seamlessly behind all glassmorphic pages.',
+    version: '8.1.0',
+    build: 'Build 810 (Official GitHub Release)',
+    releaseNotes: 'Official Live Release v8.1.0: Seamless 100% edge-to-edge full screen wallpaper rendering with zero bottom gaps or separation lines.',
     isMandatory: true,
     publishedAt: new Date().toISOString(),
-    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v8.0.0/LocFinderPro.apk'
+    downloadUrl: 'https://github.com/sonusp93/fiber-operations/releases/download/v8.1.0/LocFinderPro.apk'
   }
 };
 

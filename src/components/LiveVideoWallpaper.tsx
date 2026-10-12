@@ -32,7 +32,7 @@ export const LiveVideoWallpaper: React.FC<LiveVideoWallpaperProps> = ({
   if (isCustomImage) {
     return (
       <div
-        className="fixed inset-0 z-0 overflow-hidden pointer-events-none select-none transition-all duration-500"
+        className="fixed -inset-2 z-0 overflow-hidden pointer-events-none select-none transition-all duration-500"
         style={{
           backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.75)), url(${wallpaper})`,
           backgroundSize: 'cover',
@@ -46,7 +46,7 @@ export const LiveVideoWallpaper: React.FC<LiveVideoWallpaperProps> = ({
   // Custom uploaded MP4/WebM live video background
   if (isCustomVideo) {
     return (
-      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none select-none transition-all duration-500 bg-black">
+      <div className="fixed -inset-2 z-0 overflow-hidden pointer-events-none select-none transition-all duration-500 bg-black">
         <video
           autoPlay
           loop
@@ -300,7 +300,7 @@ const CanvasVideoPreset: React.FC<CanvasVideoPresetProps> = ({ mode }) => {
   }, [mode]);
 
   return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none z-0 select-none">
+    <div className="fixed -inset-2 overflow-hidden pointer-events-none z-0 select-none">
       <canvas ref={canvasRef} className="w-full h-full block opacity-85" />
     </div>
   );

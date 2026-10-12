@@ -1,5 +1,5 @@
 {
-  "version": "8.0.0",
+  "version": "8.1.0",
   "employees": [
     {
       "employeeId": "EMP001",
@@ -96,10 +96,10 @@
   ],
   "revokedTechnicianIds": [],
   "latestAppUpdate": {
-    "version": "8.0.0",
-    "build": "Build 800 (LocFinder Pro v8.0.0)",
-    "releaseNotes": "Official Live Major Release v8.0.0: Full-screen custom image & live video wallpapers rendering seamlessly behind all glassmorphic pages.",
+    "version": "8.1.0",
+    "build": "Build 810 (LocFinder Pro v8.1.0)",
+    "releaseNotes": "Official Live Release v8.1.0: Seamless 100% edge-to-edge full screen wallpaper rendering with zero bottom gaps or separation lines.",
     "isMandatory": true,
-    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v8.0.0/LocFinderPro.apk"
+    "downloadUrl": "https://github.com/sonusp93/fiber-operations/releases/download/v8.1.0/LocFinderPro.apk"
   }
 }
